@@ -1,0 +1,10 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+
+
+    Santeacademie\SuperUploaderBundle\Twig\UploaderTwigExtension:
+        arguments:
+            - '%super_voter.twig_globals_enabled%'
