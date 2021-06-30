@@ -1,0 +1,44 @@
+{% block asset_row %}
+	<fieldset class="form-group upload-asset upload-asset-{{ asset.name }}" data-id="{{ form.vars.id }}" data-asset="{{ asset.name }}">
+		<legend class="col-form-label required">{{ form.vars.label ?? asset.label }}</legend>
+
+		{{ form_errors(form.genuineFile) }}
+
+		{{ form_widget(form) }}
+	</fieldset>
+{% endblock %}
+
+{% block asset_widget %}
+
+	<div class="genuine-field {{ (not genuine_upload_button or variants|length == 1) ? 'hidden' }}">
+		{{ form_widget(form.genuineFile, {'attr': {'class': 'upload-asset-input', 'data-variants': variants|keys|json_encode }}) }}
+	</div>
+
+	<div class="row">
+		{% for variant in variants %}
+			{% set form_variant_type_name = form[variant.name].vars.cache_key|replace({(form[variant.name].vars.id) : ''})|trim('_') %}
+
+			<div class="uploadable-asset-variant-static-injector"
+			 	{% if form[variant.name].vars.js %}
+			 		data-js="{{ asset('/js/uploader/form/variant/'~form_variant_type_name~'.js') }}"
+			 	{% endif %}
+				{% if form[variant.name].vars.css %}
+					data-css="{{  asset('css/uploader/form/variant/'~form_variant_type_name~'.css') }}"
+			 	{% endif %}
+				data-asset="{{ asset.name }}"
+				data-variant="{{ variant.name }}"
+				data-variant-type="{{ form_variant_type_name }}">
+			</div>
+
+			{{ form_row(form[variant.name], {variant_type_name: form_variant_type_name})}}
+		{% endfor %}
+	</div>
+
+	{{ form_rest(form)}}
+{% endblock %}
+
+{% block mdr %}
+	<div style="font-size:200px;">
+		MDR
+	</div>
+{% endblock %}

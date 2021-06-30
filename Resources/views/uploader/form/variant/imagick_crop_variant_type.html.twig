@@ -1,0 +1,36 @@
+{% block imagick_crop_variant_row %}
+	<fieldset class="{{ variant_type_name }} form-group upload-variant upload-variant-{{ variant.name }} col-4">
+		<legend class="col-form-label required">{{ form.vars.label ?? variant.label }}</legend>
+
+		{{ form_errors(form) }}
+
+		{% if variant_upload_button %}
+			{{ form_widget(form.variantFile, {'attr': {'class': 'upload-variant-input ' ~ (not variant_upload_button ? 'hidden'), 'data-variants': [variant.name]|json_encode}}) }}
+		{% endif %}
+
+		{% set isEditingFile = form.variantFile.vars.data is not null %}
+
+		<small>largeur: {{ variant.width }}px; hauteur: {{ variant.height }}px</small>
+
+		{% set uploadedVariant = form.vars.data|uploadable(variant.asset.name, variant.name) %}
+
+		<div class="image-wrapper {{ isEditingFile ? 'hidden' }}" style="background-image: url('{{ asset(uploadedVariant) }}?{{ 'now'|date('U') }}');">
+		</div>
+
+		<div id="{{ form.vars.id }}_croppie"
+			class="{{ not isEditingFile ? 'hidden' }} croppie"
+			data-variant="{{ variant.name }}"
+			data-width="{{ variant.width }}"
+			data-height="{{ variant.height }}"
+			data-output="{{ form.vars.id }}"
+			data-zoom="{{ form.zoom.vars.value }}"
+			data-topLeftX="{{ form.topLeftX.vars.value }}"
+			data-topLeftY="{{ form.topLeftY.vars.value }}"
+			data-bottomRightX="{{ form.bottomRightX.vars.value }}"
+			data-bottomRightY="{{ form.bottomRightY.vars.value }}"
+			data-variantFile="{{ isEditingFile ? ('/' ~ form.variantFile.vars.data.pathname) }}">
+		</div>
+
+		{{ form_rest(form) }}
+	</fieldset>
+{% endblock %}

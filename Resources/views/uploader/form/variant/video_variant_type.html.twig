@@ -1,0 +1,24 @@
+{% block video_variant_row %}
+	<fieldset class="{{ variant_type_name }} form-group upload-variant upload-variant-{{ variant.name }} col-4">
+		<legend class="col-form-label required">{{ form.vars.label ?? variant.label }}</legend>
+
+		{{ form_errors(form) }}
+
+		{% set uploadedVariant = form.vars.data|uploadable(variant.asset.name, variant.name, false) %}
+
+		{% if uploadedVariant %}
+			<a href="{{ asset(uploadedVariant) }}?{{ 'now'|date('U') }}" target="_blank">Télécharger le fichier disponible</a>
+			<video width="500px" controls src="{{ asset(uploadedVariant) }}?{{ 'now'|date('U') }}"></video>
+		{% else %}
+			<span>Pas de fichier disponible</span>
+		{% endif %}
+		<br>
+
+		{% if variant_upload_button %}
+			{{ form_widget(form.variantFile, {'attr': {'class': 'upload-variant-input ' ~ (not variant_upload_button ? 'hidden'), 'data-variants': [variant.name]|json_encode}}) }}
+		{% endif %}
+
+
+		{{ form_rest(form) }}
+	</fieldset>
+{% endblock %}
