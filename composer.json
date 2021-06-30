@@ -13,11 +13,22 @@
 	],
 	"require": {
 		"php": ">=8.0",
+		"doctrine/annotations": "^1.0",
 		"symfony/framework-bundle": "^5.0",
 		"symfony/routing": "^5.0",
 		"symfony/security-bundle": "^5.0",
+		"doctrine/orm": "^2.7",
+		"doctrine/dbal": "^2.12",
+		"symfony/filesystem": "^5.0",
+		"symfony/finder": "^5.0",
+		"symfony/form": "^5.0",
+		"symfony/asset": "^5.0",
+		"symfony/options-resolver": "^5.0",
+		"doctrine/doctrine-bundle": "^2.1",
+		"symfony/console": "^5.0",
 		"symfony/validator": "^5.0",
 		"santeacademie/super-util": "^1.0",
+		"santeacademie/super-select": "^1.0",
 		"twig/twig": "^2.12|^3.0"
 	},
 	"require-dev": {
