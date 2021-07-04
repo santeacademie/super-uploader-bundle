@@ -9,19 +9,21 @@ use Santeacademie\SuperUploaderBundle\Manager\Doctrine\VariantEntityMapManager;
 return static function (ContainerConfigurator $container): void {
     $container->services()
 
-        ->set('santeacademie.super_uploader.persistence.driver', Driver::class)
+        ->set('super_uploader.persistence.driver', Driver::class)
             ->args([
                 null,
+                null,
+                null,
             ])
-        ->alias(Driver::class, 'santeacademie.super_uploader.persistence.driver')
+        ->alias(Driver::class, 'super_uploader.persistence.driver')
 
-        ->set('santeacademie.super_uploader.manager.doctrine.variant_entity_map', VariantEntityMapManager::class)
+        ->set('super_uploader.manager.doctrine.variant_entity_map', VariantEntityMapManager::class)
             ->args([
                 null,
                 null,
             ])
-        ->alias(VariantEntityMapManagerInterface::class, 'santeacademie.super_uploader.manager.doctrine.variant_entity_map')
-        ->alias(VariantEntityMapManager::class, 'santeacademie.super_uploader.manager.doctrine.variant_entity_map')
+        ->alias(VariantEntityMapManagerInterface::class, 'super_uploader.manager.doctrine.variant_entity_map')
+        ->alias(VariantEntityMapManager::class, 'super_uploader.manager.doctrine.variant_entity_map')
 
         
     ;

@@ -105,15 +105,18 @@ class SuperUploaderExtension extends Extension implements CompilerPassInterface
         $container
             ->findDefinition(Driver::class)
             ->replaceArgument(0, Client::class !== $config['variant_entity_map']['classname'])
+            ->replaceArgument(1, $config['persistence']['doctrine']['table_name'])
+            ->replaceArgument(2, $config['persistence']['doctrine']['schema_name'] ?? null)
+
         ;
 
-        $container->setParameter('santeacademie.super_uploader.persistence.doctrine.enabled', true);
-        $container->setParameter('santeacademie.super_uploader.persistence.doctrine.manager', $entityManagerName);
+        $container->setParameter('super_uploader.persistence.doctrine.enabled', true);
+        $container->setParameter('super_uploader.persistence.doctrine.manager', $entityManagerName);
     }
 
     private function configureInMemoryPersistence(ContainerBuilder $container): void
     {
-        $container->setParameter('santeacademie.super_uploader.persistence.in_memory.enabled', true);
+        $container->setParameter('super_uploader.persistence.in_memory.enabled', true);
     }
 
 }

@@ -34,23 +34,23 @@ return static function (ContainerConfigurator $container): void {
         ->instanceof(VariantTansformerInterface::class)
             ->tag('super_uploader.transformer')
     
-        ->set('santeacademie.super_uploader.repository.variant_entity_map', VariantEntityMapRepository::class)
+        ->set('super_uploader.repository.variant_entity_map', VariantEntityMapRepository::class)
         ->args([
             service(VariantEntityMapManagerInterface::class),
         ])
-        ->alias(VariantEntityMapRepositoryInterface::class, 'santeacademie.super_uploader.repository.variant_entity_map')
-        ->alias(VariantEntityMapRepository::class, 'santeacademie.super_uploader.repository.variant_entity_map')
+        ->alias(VariantEntityMapRepositoryInterface::class, 'super_uploader.repository.variant_entity_map')
+        ->alias(VariantEntityMapRepository::class, 'super_uploader.repository.variant_entity_map')
 
             
-        ->set('santeacademie.super_uploader.bridge.temporary', UploadableTemporaryBridge::class)
+        ->set('super_uploader.bridge.temporary', UploadableTemporaryBridge::class)
         ->args([
             '%kernel.project_dir%/public',
             '%super_uploader.mountpoint.temp%',
             service(Filesystem::class),
         ])
-        ->alias(UploadableTemporaryBridge::class, 'santeacademie.super_uploader.bridge.temporary')
+        ->alias(UploadableTemporaryBridge::class, 'super_uploader.bridge.temporary')
             
-        ->set('santeacademie.super_uploader.bridge.persistent', UploadablePersistentBridge::class)
+        ->set('super_uploader.bridge.persistent', UploadablePersistentBridge::class)
         ->args([
             '%kernel.project_dir%/public',
             '%super_uploader.mountpoint.uploads%',
@@ -58,9 +58,9 @@ return static function (ContainerConfigurator $container): void {
             service(UploadableTemporaryBridge::class),
             service(VariantEntityMapRepository::class),
         ])
-        ->alias(UploadablePersistentBridge::class, 'santeacademie.super_uploader.bridge.persistent')
+        ->alias(UploadablePersistentBridge::class, 'super_uploader.bridge.persistent')
             
-        ->set('santeacademie.super_uploader.bridge.entity', UploadableEntityBridge::class)
+        ->set('super_uploader.bridge.entity', UploadableEntityBridge::class)
         ->args([
             '%kernel.project_dir%/public',
             '%super_uploader.mountpoint.resources%',
@@ -69,11 +69,11 @@ return static function (ContainerConfigurator $container): void {
             service(UploadableTemporaryBridge::class),
             service(EventDispatcherInterface::class),
         ])
-        ->alias(UploadableEntityBridge::class, 'santeacademie.super_uploader.bridge.entity')
+        ->alias(UploadableEntityBridge::class, 'super_uploader.bridge.entity')
             
             
             
-        ->set('santeacademie.super_uploader.generator.fallback_resources', FallbackResourcesGenerator::class)
+        ->set('super_uploader.generator.fallback_resources', FallbackResourcesGenerator::class)
             ->args([
                 '%kernel.project_dir%/public',
                 service(Filesystem::class),
@@ -82,19 +82,19 @@ return static function (ContainerConfigurator $container): void {
                 service(UploadableEntityBridge::class),
 
             ])
-        ->alias(FallbackResourcesGenerator::class, 'santeacademie.super_uploader.generator.fallback_resources')
+        ->alias(FallbackResourcesGenerator::class, 'super_uploader.generator.fallback_resources')
             
                 
             
-        ->set('santeacademie.super_uploader.command.fallback_resources_generator', FallbackResourcesGeneratorCommand::class)
+        ->set('super_uploader.command.fallback_resources_generator', FallbackResourcesGeneratorCommand::class)
             ->args([
                 service(FallbackResourcesGenerator::class)
             ])
             ->tag('console.command')
-        ->alias(FallbackResourcesGeneratorCommand::class, 'santeacademie.super_uploader.command.fallback_resources_generator')
+        ->alias(FallbackResourcesGeneratorCommand::class, 'super_uploader.command.fallback_resources_generator')
             
             
-        ->set('santeacademie.super_uploader.command.generate_database_variant_map', GenerateDatabaseVariantMapCommand::class)
+        ->set('super_uploader.command.generate_database_variant_map', GenerateDatabaseVariantMapCommand::class)
             ->args([
                 '%kernel.project_dir%/public',
                 service(EntityManagerInterface::class),
@@ -102,55 +102,55 @@ return static function (ContainerConfigurator $container): void {
                 service(UploadableEntityBridge::class),
             ])
             ->tag('console.command')
-        ->alias(GenerateDatabaseVariantMapCommand::class, 'santeacademie.super_uploader.command.generate_database_variant_map')
+        ->alias(GenerateDatabaseVariantMapCommand::class, 'super_uploader.command.generate_database_variant_map')
             
             
-        ->set('santeacademie.super_uploader.form.asset_type', AssetType::class)
+        ->set('super_uploader.form.asset_type', AssetType::class)
             ->args([
                 service(UploadableTemporaryBridge::class),
                 service(UploadableEntityBridge::class),
                 service(EventDispatcherInterface::class),
             ])
             ->tag('form.type')
-        ->alias(AssetType::class, 'santeacademie.super_uploader.form.asset_type')
+        ->alias(AssetType::class, 'super_uploader.form.asset_type')
             
             
      
 
             
-        ->set('santeacademie.super_uploader.transformer.imagick_crop', ImagickCropTransformer::class)
-            ->alias(ImagickCropTransformer::class, 'santeacademie.super_uploader.transformer.imagick_crop')
+        ->set('super_uploader.transformer.imagick_crop', ImagickCropTransformer::class)
+            ->alias(ImagickCropTransformer::class, 'super_uploader.transformer.imagick_crop')
             
-        ->set('santeacademie.super_uploader.transformer.identity', FileTransformer::class)
-            ->alias(FileTransformer::class, 'santeacademie.super_uploader.transformer.identity')
+        ->set('super_uploader.transformer.identity', FileTransformer::class)
+            ->alias(FileTransformer::class, 'super_uploader.transformer.identity')
 
             
-        ->set('santeacademie.super_uploader.form.variant_type.imagick_crop', ImagickCropVariantType::class)
+        ->set('super_uploader.form.variant_type.imagick_crop', ImagickCropVariantType::class)
             ->args([
                 service(ImagickCropTransformer::class),
             ])
             ->tag('form.type')
-        ->alias(ImagickCropVariantType::class, 'santeacademie.super_uploader.form.variant_type.imagick_crop')
+        ->alias(ImagickCropVariantType::class, 'super_uploader.form.variant_type.imagick_crop')
             
             
             
             
-        ->set('santeacademie.super_uploader.twig.uploader_extension', UploaderTwigExtension::class)
+        ->set('super_uploader.twig.uploader_extension', UploaderTwigExtension::class)
             ->args([
                 service(UploadableEntityBridge::class),
             ])
             ->tag('twig.extension')
-        ->alias(UploaderTwigExtension::class, 'santeacademie.super_uploader.twig.uploader_extension')
+        ->alias(UploaderTwigExtension::class, 'super_uploader.twig.uploader_extension')
             
-        ->set('santeacademie.super_uploader.subscriber.uploadable', UploadableSubscriber::class)
+        ->set('super_uploader.subscriber.uploadable', UploadableSubscriber::class)
             ->args([
                 service(UploadableTemporaryBridge::class),
                 service(UploadablePersistentBridge::class),
             ])
             ->tag('kernel.event_subscriber')
-        ->alias(UploadableSubscriber::class, 'santeacademie.super_uploader.subscriber.uploadable')
+        ->alias(UploadableSubscriber::class, 'super_uploader.subscriber.uploadable')
             
-        ->set('santeacademie.super_uploader.doctrine.entity_listener', UploadableEntityListener::class)
+        ->set('super_uploader.doctrine.entity_listener', UploadableEntityListener::class)
             ->args([
                 service(EventDispatcherInterface::class),
                 service(UploadableTemporaryBridge::class),
@@ -173,6 +173,6 @@ return static function (ContainerConfigurator $container): void {
                 'method' => 'postFlush',
                 'priority' => 1
             ])
-        ->alias(UploadableEntityListener::class, 'santeacademie.super_uploader.doctrine.entity_listener')
+        ->alias(UploadableEntityListener::class, 'super_uploader.doctrine.entity_listener')
     ;
 };

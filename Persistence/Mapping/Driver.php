@@ -10,14 +10,14 @@ use Santeacademie\SuperUploaderBundle\Model\AbstractVariantEntityMap;
 
 class Driver implements MappingDriver
 {
-    /**
-     * @var bool
-     */
-    private $withCustomVariantEntityMapClass;
 
-    public function __construct(bool $withCustomVariantEntityMapClass)
+    public function __construct(
+        private bool $withCustomVariantEntityMapClass,
+        private string $tableName,
+        private ?string $schemaName
+    )
     {
-        $this->withCustomVariantEntityMapClass = $withCustomVariantEntityMapClass;
+       
     }
 
     public function loadMetadataForClass($className, ClassMetadata $metadata): void
@@ -51,11 +51,16 @@ class Driver implements MappingDriver
 
     private function buildVariantEntityMapMetadata(ClassMetadata $metadata): void
     {
+        $options = [
+            'name' => $this->tableName
+        ];
+        
+        if (!empty($this->schemaName)) {
+            $options['schema'] = $this->schemaName;
+        }
+        
         (new ClassMetadataBuilder($metadata))
-            ->getClassMetadata()->setPrimaryTable([
-                'name' => 'super_uploader_variant_entity_map',
-                'schema' => 'santeacademie'
-            ])
+            ->getClassMetadata()->setPrimaryTable($options)
         ;
     }
 
