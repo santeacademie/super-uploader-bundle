@@ -165,13 +165,13 @@ class UserType extends AbstractType
 - Generate placeholders
 
 ```bash
-php bin/console super-uploader:generate:fallbacks
+php bin/console santeacademie:super-uploader:generate:fallbacks
 ```
 
 - Rebuild variant entity map into database
 
 ```bash
-php bin/console super-uploader:generate:dbmap
+php bin/console santeacademie:super-uploader:generate:dbmap
 ```
 
 ## 4. Useful
