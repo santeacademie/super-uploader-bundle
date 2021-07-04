@@ -14,6 +14,7 @@ use Santeacademie\SuperUploaderBundle\Bridge\UploadableEntityBridge;
 use Santeacademie\SuperUploaderBundle\Bridge\UploadablePersistentBridge;
 use Santeacademie\SuperUploaderBundle\Model\VariantEntityMap;
 use Santeacademie\SuperUploaderBundle\Interface\UploadableInterface;
+use Santeacademie\SuperUploaderBundle\Repository\VariantEntityMapRepository;
 use Santeacademie\SuperUploaderBundle\Wrapper\FallbackResourceFile;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Command\Command;
@@ -39,7 +40,8 @@ class GenerateDatabaseVariantMapCommand extends Command
         private string $appPublicDir,
         private EntityManagerInterface $entityManager,
         private UploadablePersistentBridge $uploadablePersistentBridge,
-        private UploadableEntityBridge $uploadableEntityBridge
+        private UploadableEntityBridge $uploadableEntityBridge,
+        private ?VariantEntityMapRepository $variantEntityMapRepository
     )
     {
         parent::__construct();
@@ -89,7 +91,7 @@ class GenerateDatabaseVariantMapCommand extends Command
                                 $variantEntityMap->getFullPath()
                             ));
 
-                            $this->entityManager->getRepository(VariantEntityMap::class)->persistVariantEntityMap(
+                            $this->variantEntityMapRepository->persistVariantEntityMap(
                                 $variant,
                                 $variantEntityMap
                             );

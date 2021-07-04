@@ -95,6 +95,7 @@ return static function (ContainerConfigurator $container): void {
                 service(EntityManagerInterface::class),
                 service(UploadablePersistentBridge::class),
                 service(UploadableEntityBridge::class),
+                null,
             ])
             ->tag('console.command')
         ->alias(GenerateDatabaseVariantMapCommand::class, 'super_uploader.command.generate_database_variant_map')
