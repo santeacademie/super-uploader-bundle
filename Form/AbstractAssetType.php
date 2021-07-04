@@ -2,7 +2,7 @@
 
 namespace Santeacademie\SuperUploaderBundle\Form;
 
-use Santeacademie\SuperUploaderBundle\Super\Interfaces\UploadableInterface;
+use Santeacademie\SuperUploaderBundle\Interface\UploadableInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Form\AbstractType;
 

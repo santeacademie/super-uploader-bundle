@@ -4,9 +4,9 @@ namespace Santeacademie\SuperUploaderBundle\Bridge;
 
 use App\Core\Super\Entity\ListenableEntityInterface;
 use Santeacademie\SuperUploaderBundle\Asset\AbstractAsset;
-use Santeacademie\SuperUploaderBundle\Super\Interfaces\UploadableInterface;
+use Santeacademie\SuperUploaderBundle\Interface\UploadableInterface;
 use Santeacademie\SuperUploaderBundle\Asset\Variant\AbstractVariant;
-use Santeacademie\SuperUploaderBundle\Super\Wrapper\FallbackResourceFile;
+use Santeacademie\SuperUploaderBundle\Wrapper\FallbackResourceFile;
 use Santeacademie\SuperUtil\FileUtil;
 use Santeacademie\SuperUtil\IteratorUtil;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;

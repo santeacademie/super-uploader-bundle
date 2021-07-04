@@ -3,7 +3,7 @@
 namespace Santeacademie\SuperUploaderBundle\Form\VariantType;
 
 use Santeacademie\SuperUploaderBundle\Asset\Variant\PictureVariant;
-use Santeacademie\SuperUploaderBundle\Super\Interfaces\VariantTansformerInterface;
+use Santeacademie\SuperUploaderBundle\Interface\VariantTansformerInterface;
 use Santeacademie\SuperUploaderBundle\Form\AbstractVariantType;
 use Santeacademie\SuperUploaderBundle\Transformer\ImagickCropTransformer;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;

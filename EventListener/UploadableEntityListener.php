@@ -3,7 +3,7 @@
 namespace Santeacademie\SuperUploaderBundle\EventListener;
 
 use Santeacademie\SuperUploaderBundle\Bridge\UploadableEntityBridge;
-use Santeacademie\SuperUploaderBundle\Super\Interfaces\UploadableInterface;
+use Santeacademie\SuperUploaderBundle\Interface\UploadableInterface;
 use Santeacademie\SuperUploaderBundle\Event\UploadableDeletedEvent;
 use Santeacademie\SuperUploaderBundle\Event\UploadablePersistedEvent;
 use Santeacademie\SuperUploaderBundle\Bridge\UploadablePersistentBridge;

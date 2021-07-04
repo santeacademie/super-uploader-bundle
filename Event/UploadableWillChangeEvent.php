@@ -3,7 +3,7 @@
 namespace Santeacademie\SuperUploaderBundle\Event;
 
 use Santeacademie\SuperUploaderBundle\Asset\Variant\AbstractVariant;
-use Santeacademie\SuperUploaderBundle\Super\Interfaces\UploadableInterface;
+use Santeacademie\SuperUploaderBundle\Interface\UploadableInterface;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Contracts\EventDispatcher\Event;
 

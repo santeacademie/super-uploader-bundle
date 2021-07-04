@@ -5,7 +5,7 @@ namespace Santeacademie\SuperUploaderBundle\Form;
 use Santeacademie\SuperUploaderBundle\Asset\AbstractAsset;
 use Santeacademie\SuperUploaderBundle\Asset\Variant\AbstractVariant;
 use Santeacademie\SuperUploaderBundle\Asset\Variant\PictureVariant;
-use Santeacademie\SuperUploaderBundle\Super\Interfaces\VariantTansformerInterface;
+use Santeacademie\SuperUploaderBundle\Interface\VariantTansformerInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;

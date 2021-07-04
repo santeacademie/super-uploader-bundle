@@ -1,6 +1,6 @@
 <?php
 
-namespace Santeacademie\SuperUploaderBundle\Super\Interfaces;
+namespace Santeacademie\SuperUploaderBundle\Interface;
 
 use App\Core\Super\Entity\GuessableEntityIdentifierInterface;
 use Santeacademie\SuperUploaderBundle\Asset\Variant\AbstractVariant;

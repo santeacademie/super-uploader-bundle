@@ -5,7 +5,7 @@ namespace Santeacademie\SuperUploaderBundle\Bridge;
 use Santeacademie\SuperUploaderBundle\Model\AbstractVariantEntityMap;
 use Santeacademie\SuperUploaderBundle\Model\VariantEntityMap;
 use Santeacademie\SuperUploaderBundle\Repository\VariantEntityMapRepository;
-use Santeacademie\SuperUploaderBundle\Super\Interfaces\UploadableInterface;
+use Santeacademie\SuperUploaderBundle\Interface\UploadableInterface;
 use Santeacademie\SuperUploaderBundle\Asset\AbstractAsset;
 use Santeacademie\SuperUploaderBundle\Asset\Variant\AbstractVariant;
 use Doctrine\ORM\EntityManagerInterface;

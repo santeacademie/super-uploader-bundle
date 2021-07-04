@@ -3,7 +3,7 @@
 namespace Santeacademie\SuperUploaderBundle\Form\VariantType;
 
 use Santeacademie\SuperUploaderBundle\Asset\Variant\VideoVariant;
-use Santeacademie\SuperUploaderBundle\Super\Interfaces\VariantTansformerInterface;
+use Santeacademie\SuperUploaderBundle\Interface\VariantTansformerInterface;
 use Santeacademie\SuperUploaderBundle\Form\AbstractVariantType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 

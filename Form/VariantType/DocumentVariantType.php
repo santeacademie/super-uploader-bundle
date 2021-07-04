@@ -4,7 +4,7 @@ namespace Santeacademie\SuperUploaderBundle\Form\VariantType;
 
 use Santeacademie\SuperUploaderBundle\Asset\AbstractAsset;
 use Santeacademie\SuperUploaderBundle\Asset\Variant\DocumentVariant;
-use Santeacademie\SuperUploaderBundle\Super\Interfaces\VariantTansformerInterface;
+use Santeacademie\SuperUploaderBundle\Interface\VariantTansformerInterface;
 use Santeacademie\SuperUploaderBundle\Form\AbstractVariantType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 

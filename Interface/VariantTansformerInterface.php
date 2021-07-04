@@ -1,6 +1,6 @@
 <?php
 
-namespace Santeacademie\SuperUploaderBundle\Super\Interfaces;
+namespace Santeacademie\SuperUploaderBundle\Interface;
 
 use Santeacademie\SuperUploaderBundle\Asset\Variant\AbstractVariant;
 use Symfony\Component\HttpFoundation\File\File;
