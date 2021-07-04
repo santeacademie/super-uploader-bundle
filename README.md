@@ -228,3 +228,7 @@ class FooController extends AbstractController
 ?>
 ```
 
+- Generate asset in twig
+```html
+<img src="{{ asset(user.profilePicture.variant('landscape').variantFile) }}" />
+```
