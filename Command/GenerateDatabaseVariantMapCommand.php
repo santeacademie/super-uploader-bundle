@@ -33,7 +33,7 @@ class GenerateDatabaseVariantMapCommand extends Command
         Trainer::class
     ];
 
-    protected static $defaultName = 'super-uploader:generate:dbmap';
+    protected static $defaultName = 'santeacademie:super-uploader:generate:dbmap';
 
     public function __construct(
         private string $appPublicDir,
