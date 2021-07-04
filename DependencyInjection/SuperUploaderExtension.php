@@ -6,6 +6,7 @@
 namespace Santeacademie\SuperUploaderBundle\DependencyInjection;
 
 use Santeacademie\SuperUploaderBundle\Bridge\UploadablePersistentBridge;
+use Santeacademie\SuperUploaderBundle\Command\GenerateDatabaseVariantMapCommand;
 use Santeacademie\SuperUploaderBundle\DependencyInjection\Configuration;
 use Santeacademie\SuperUploaderBundle\Manager\Doctrine\VariantEntityMapManager;
 use Santeacademie\SuperUploaderBundle\Persistence\Mapping\Driver;
@@ -121,6 +122,11 @@ class SuperUploaderExtension extends Extension implements CompilerPassInterface
 
         $container
             ->findDefinition(UploadablePersistentBridge::class)
+            ->replaceArgument(4, $container->getDefinition('super_uploader.repository.variant_entity_map'))
+        ;
+
+        $container
+            ->findDefinition(GenerateDatabaseVariantMapCommand::class)
             ->replaceArgument(4, $container->getDefinition('super_uploader.repository.variant_entity_map'))
         ;
 
