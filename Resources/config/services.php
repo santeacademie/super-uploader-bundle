@@ -107,7 +107,6 @@ return static function (ContainerConfigurator $container): void {
             
         ->set('santeacademie.super_uploader.form.asset_type', AssetType::class)
             ->args([
-                '%kernel.project_dir%/public',
                 service(UploadableTemporaryBridge::class),
                 service(UploadableEntityBridge::class),
                 service(EventDispatcherInterface::class),
@@ -162,11 +161,13 @@ return static function (ContainerConfigurator $container): void {
                 'event' => 'postLoad',
                 'method' => 'postLoad'
             ])
+            /*
             ->tag('doctrine.event_listener', [
                 'event' => 'onFlush',
                 'method' => 'onFlush',
                 'priority' => -1
             ])
+             */
             ->tag('doctrine.event_listener', [
                 'event' => 'postFlush',
                 'method' => 'postFlush',

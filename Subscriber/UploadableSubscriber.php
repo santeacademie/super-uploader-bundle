@@ -43,7 +43,7 @@ class UploadableSubscriber implements EventSubscriberInterface
         // Remove persisted files on the Pipe
         $this->uploadablePersistentBridge->removeEntityVariantFiles($event->getUploadableEntity());
 
-        // Flush deletable file Pipe
+        // Flush deletable file from the Pipe
         $this->uploadablePersistentBridge->removeIndexedEntityWithDeletableVariants($event->getUploadableEntity());
     }
 

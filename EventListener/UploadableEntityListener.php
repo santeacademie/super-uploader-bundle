@@ -2,7 +2,6 @@
 
 namespace Santeacademie\SuperUploaderBundle\EventListener;
 
-//use App\Core\Lifecycle\ListenableEntityCollector;
 use Santeacademie\SuperUploaderBundle\Bridge\UploadableEntityBridge;
 use Santeacademie\SuperUploaderBundle\Super\Interfaces\UploadableInterface;
 use Santeacademie\SuperUploaderBundle\Event\UploadableDeletedEvent;
@@ -21,33 +20,11 @@ class UploadableEntityListener
         private EventDispatcherInterface $eventDispatcher,
         private UploadableTemporaryBridge $uploadableTemporaryBridge,
         private UploadablePersistentBridge $uploadablePersistentBridge,
-        private UploadableEntityBridge $uploadableEntityBridge,
-//        private ListenableEntityCollector $listenableEntityCollector
+        private UploadableEntityBridge $uploadableEntityBridge
     )
     {
 
     }
-
-//    public function onFlush(OnFlushEventArgs $args): void
-//    {
-//        foreach ($this->listenableEntityCollector->getCollectedInsertions() as $entity) {
-//            if ($entity instanceof UploadableInterface) {
-//                $this->uploadableEntityBridge->populateUploadableFields($entity);
-//            }
-//        }
-//
-//        foreach ($this->listenableEntityCollector->getCollectedUpdates() as $entity) {
-//            if ($entity instanceof UploadableInterface) {
-//                $this->uploadableEntityBridge->populateUploadableFields($entity);
-//            }
-//        }
-//
-//        foreach($this->listenableEntityCollector->getCollectedDeletions() as $entity) {
-//            if ($entity instanceof UploadableInterface) {
-//                $this->uploadablePersistentBridge->indexEntityVariantsToDelete($entity);
-//            }
-//        }
-//    }
 
     public function postFlush(PostFlushEventArgs $args): void
     {
@@ -69,7 +46,7 @@ class UploadableEntityListener
         $entity = $args->getObject();
 
         if ($entity instanceof UploadableInterface) {
-//            $this->uploadableEntityBridge->populateUploadableFields($entity);
+            $this->uploadableEntityBridge->populateUploadableFields($entity);
         }
     }
 

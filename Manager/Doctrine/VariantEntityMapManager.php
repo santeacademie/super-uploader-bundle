@@ -51,5 +51,10 @@ final class VariantEntityMapManager implements VariantEntityMapManagerInterface
         return $this->entityManager;
     }
 
+    public function getEntityClass(): string
+    {
+        return $this->variantEntityMapFqcn;
+    }
+
     
 }
