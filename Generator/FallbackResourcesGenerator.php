@@ -19,9 +19,9 @@ class FallbackResourcesGenerator
     protected $font;
 
     public function __construct(
+        protected string $appPublicDir,
         protected Filesystem $filesystem,
         protected EntityManagerInterface $entityManager,
-        protected string $appPublicDir,
         protected KernelInterface $kernel,
         protected UploadableEntityBridge $uploadableEntityBridge
     )

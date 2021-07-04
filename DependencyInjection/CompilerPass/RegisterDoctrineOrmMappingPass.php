@@ -16,8 +16,8 @@ class RegisterDoctrineOrmMappingPass extends DoctrineOrmMappingsPass
         parent::__construct(
             driver: new Reference(Driver::class),
             namespaces: ['Santeacademie\SuperUploaderBundle\Model'],
-            managerParameters: ['santeacademie.super_uploader.persistence.doctrine.manager'],
-            enabledParameter: 'santeacademie.super_uploader.persistence.doctrine.enabled',
+            managerParameters: ['super_uploader.persistence.doctrine.manager'],
+            enabledParameter: 'super_uploader.persistence.doctrine.enabled',
             aliasMap: ['SuperUploaderBundle' => 'Santeacademie\SuperUploaderBundle\Model']
         );
     }

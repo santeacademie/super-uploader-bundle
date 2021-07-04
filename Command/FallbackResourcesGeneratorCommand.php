@@ -12,7 +12,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 class FallbackResourcesGeneratorCommand extends Command
 {
 
-    protected static $defaultName = 'santeacademie:super-uploader:generate:resources';
+    protected static $defaultName = 'super-uploader:generate:fallbacks';
 
 
     public function __construct(private FallbackResourcesGenerator $fallbackResourcesGenerator)

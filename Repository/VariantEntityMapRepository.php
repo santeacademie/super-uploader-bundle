@@ -5,9 +5,11 @@ namespace Santeacademie\SuperUploaderBundle\Repository;
 use Santeacademie\SuperUploaderBundle\Manager\Doctrine\VariantEntityMapManager;
 use Santeacademie\SuperUtil\StringUtil;
 use Santeacademie\SuperUploaderBundle\Asset\Variant\AbstractVariant;
-use Santeacademie\SuperUploaderBundle\Entity\VariantEntityMap as VariantEntityMapEntity;
 use Santeacademie\SuperUploaderBundle\Manager\VariantEntityMapManagerInterface;
 use Santeacademie\SuperUploaderBundle\Model\AbstractVariantEntityMap;
+use Santeacademie\SuperUploaderBundle\Model\VariantEntityMap;
+use Santeacademie\SuperUploaderBundle\Super\Interfaces\UploadableInterface;
+
 use Symfony\Component\HttpFoundation\File\File;
 
 final class VariantEntityMapRepository implements VariantEntityMapRepositoryInterface
@@ -22,16 +24,18 @@ final class VariantEntityMapRepository implements VariantEntityMapRepositoryInte
         $this->variantEntityMapManager = $variantEntityMapManager;
     }
 
-    public function persistVariantEntityMap(AbstractVariant $variant, VariantEntityMap $map): void
+    public function persistVariantEntityMap(AbstractVariant $variant, AbstractVariantEntityMap $map): void
     {
         $this->deleteAnyOldEntityMap($variant, $map);
 
         $em = $this->variantEntityMapManager->getEntityManager();
-        $fields = $em->getClassMetadata(VariantEntityMap::class)->getFieldNames();
+        $metadata = $em->getClassMetadata(get_class($map));
+     
+        $fields = $metadata->getFieldNames();
 
         $sql = sprintf("INSERT INTO %s.%s(%s) VALUES(%s)",
-            $this->getClassMetadata()->getSchemaName(),
-            $this->getClassMetadata()->getTableName(),
+            $metadata->getSchemaName(),
+            $metadata->getTableName(),
             implode(',', array_map(function($field) {
                 return StringUtil::camelCaseToSnakeCase($field);
             }, $fields)),
@@ -50,16 +54,16 @@ final class VariantEntityMapRepository implements VariantEntityMapRepositoryInte
             }, $fields))
         );
 
-        $this->getEntityManager()->getConnection()->executeStatement($sql);
+        $em->getConnection()->executeStatement($sql);
     }
 
-    public function deleteAnyOldEntityMap(AbstractVariant $variant, VariantEntityMap $newVariantEntityMap): void
+    public function deleteAnyOldEntityMap(AbstractVariant $variant, AbstractVariantEntityMap $newVariantEntityMap): void
     {
         $em = $this->variantEntityMapManager->getEntityManager();
 
         $qb =
             $em->createQueryBuilder()
-                ->delete(VariantEntityMap::class, 'e')
+                ->delete(get_class($newVariantEntityMap), 'e')
                 ->where('e.assetName = :assetName')->setParameter('assetName', $variant->getAsset()->getName())
                 ->andWhere('e.variantName = :variantName')->setParameter('variantName', $variant->getName())
                 ->andWhere('e.mediaType = :mediaType')->setParameter('mediaType', $variant->getAsset()->getMediaType())
@@ -78,9 +82,25 @@ final class VariantEntityMapRepository implements VariantEntityMapRepositoryInte
 
         $qb =
             $em->createQueryBuilder()
-                ->delete(VariantEntityMap::class, 'e')
+                ->delete($this->variantEntityMapManager->getEntityClass(), 'e')
                 ->where('e.fullPath = :fullPath')
                 ->setParameter('fullPath', $file->getPathname())
+        ;
+
+        $qb->getQuery()->getResult();
+    }
+
+    public function deleteEntityMapByUploadableEntity(UploadableInterface $uploadableEntity): void
+    {
+        $em = $this->variantEntityMapManager->getEntityManager();
+
+        $qb =
+            $em->createQueryBuilder()
+                ->delete($this->variantEntityMapManager->getEntityClass(), 'e')
+                ->where('e.entityClass = :entityClass')
+                ->andWhere('e.entityIdentifier = :entityIdentifier')
+                ->setParameter('entityClass', get_class($uploadableEntity))
+                ->setParameter('entityIdentifier', $uploadableEntity->getEntityIdentifierValue())
         ;
 
         $qb->getQuery()->getResult();

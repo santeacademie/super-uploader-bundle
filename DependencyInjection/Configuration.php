@@ -26,12 +26,41 @@ class Configuration implements ConfigurationInterface
 
         $rootNode
             ->children()
+            ->append($this->createMountpointsNode())
             ->append($this->createPersistenceNode())
             ->append($this->createVariantEntityMapNode())
             ->end()
         ;
 
         return $treeBuilder;
+    }
+
+    private function createMountpointsNode(): ArrayNodeDefinition
+    {
+        $treeBuilder = new TreeBuilder('mountpoints');
+        $node = $treeBuilder->getRootNode();
+
+        $node
+            ->isRequired()
+            ->performNoDeepMerging()
+                ->children()
+                    ->scalarNode('uploads')
+                        ->cannotBeEmpty()
+                        ->defaultValue('uploads')
+                    ->end()
+                    ->scalarNode('resources')
+                        ->cannotBeEmpty()
+                        ->defaultValue('resources')
+                    ->end()
+                    ->scalarNode('temp')
+                        ->cannotBeEmpty()
+                        ->defaultValue('uploads/tmp')
+                    ->end()
+                ->end()
+            ->end()
+        ;
+
+        return $node;
     }
 
     private function createPersistenceNode(): ArrayNodeDefinition
@@ -44,19 +73,28 @@ class Configuration implements ConfigurationInterface
             ->isRequired()
             ->performNoDeepMerging()
             ->children()
-            // Doctrine persistence
-            ->arrayNode('doctrine')
-            ->children()
-            ->scalarNode('entity_manager')
-            ->info('Name of the entity manager that you wish to use for managing variant_entity_maps.')
-            ->cannotBeEmpty()
-            ->defaultValue('default')
-            ->end()
-            ->end()
-            ->end()
-            // In-memory persistence
-            ->scalarNode('in_memory')
-            ->end()
+                // Doctrine persistence
+                ->arrayNode('doctrine')
+                    ->children()
+                        ->scalarNode('entity_manager')
+                            ->info('Name of the entity manager that you wish to use for managing variant_entity_maps.')
+                            ->cannotBeEmpty()
+                            ->defaultValue('default')
+                        ->end()
+                
+                        ->scalarNode('table_name')
+                            ->cannotBeEmpty()
+                            ->defaultValue('super_uploader_variant_entity_map')
+                        ->end()
+                
+                        ->scalarNode('schema_name')
+                            ->defaultValue(null)
+                        ->end()
+                    ->end()
+                ->end()
+                // In-memory persistence
+                ->scalarNode('in_memory')
+                ->end()
             ->end()
         ;
 

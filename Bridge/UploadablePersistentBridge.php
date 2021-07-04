@@ -77,7 +77,6 @@ class UploadablePersistentBridge extends AbstractUploadableBridge
         $variantFile = $variant->getVariantFile(false);
 
         $variantEntityMap = (new VariantEntityMap())
-            ->setNonNullEntityIdentifier($uploadableEntity)
             ->setEntityClass(PathUtil::sanitizeForProxy(get_class($uploadableEntity)))
             ->setEntityIdentifier("".$uploadableEntity->getEntityIdentifierValue())
             ->setFullPath($variantFile->getPathname())
@@ -113,10 +112,20 @@ class UploadablePersistentBridge extends AbstractUploadableBridge
 
             foreach ($asset->getVariants() as $variant) {
                 /** @var AbstractVariant $variant */
-                $this->filesystem->remove($variant->getVariantFile(false));
+                $file = $variant->getVariantFile(false);
+                
+                if (is_null($file)) {
+                    continue;
+                }
+                
+                $this->variantEntityMapRepository->deleteEntityMapByFile($file);
+                $this->filesystem->remove($file);
                 $variant->setVariantFile(null);
             }
         }
+        
+        // Alternatively...
+        //$this->variantEntityMapRepository->deleteEntityMapByUploadableEntity($uploadableEntity);
 
         return true;
     }
