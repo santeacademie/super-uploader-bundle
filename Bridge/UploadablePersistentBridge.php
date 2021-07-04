@@ -25,7 +25,7 @@ class UploadablePersistentBridge extends AbstractUploadableBridge
         protected string $uploadableMountpoint,
         protected Filesystem $filesystem,
         protected UploadableTemporaryBridge $uploadableTemporaryBridge,
-        protected VariantEntityMapRepository $variantEntityMapRepository
+        protected ?VariantEntityMapRepository $variantEntityMapRepository
     )
     {
         parent::__construct($appPublicDir);
@@ -62,10 +62,12 @@ class UploadablePersistentBridge extends AbstractUploadableBridge
             $variant->setVariantFile($variantFile);
 
             // Keep an eye on this variant on a database
-            $this->variantEntityMapRepository->persistVariantEntityMap(
-                $variant,
-                $this->generateVariantEntityMap($uploadableEntity, $variant)
-            );
+            if (!empty($this->variantEntityMapRepository)) {
+                $this->variantEntityMapRepository->persistVariantEntityMap(
+                    $variant,
+                    $this->generateVariantEntityMap($uploadableEntity, $variant)
+                );
+            }
 
             return $variantFile;
         }, $this->uploadableTemporaryBridge->getIndexedEntityTemporaryVariants($uploadableEntity));
@@ -117,15 +119,22 @@ class UploadablePersistentBridge extends AbstractUploadableBridge
                 if (is_null($file)) {
                     continue;
                 }
-                
-                $this->variantEntityMapRepository->deleteEntityMapByFile($file);
+
+                if (!empty($this->variantEntityMapRepository)) {
+                    $this->variantEntityMapRepository->deleteEntityMapByFile($file);
+                }
+
                 $this->filesystem->remove($file);
                 $variant->setVariantFile(null);
             }
         }
         
         // Alternatively...
-        //$this->variantEntityMapRepository->deleteEntityMapByUploadableEntity($uploadableEntity);
+        /*
+        if (!empty($this->variantEntityMapRepository)) {
+            $this->variantEntityMapRepository->deleteEntityMapByUploadableEntity($uploadableEntity);
+        }
+        */
 
         return true;
     }
