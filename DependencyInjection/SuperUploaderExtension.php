@@ -13,6 +13,7 @@ use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
 use Symfony\Component\DependencyInjection\Loader;
+use Symfony\Component\DependencyInjection\Loader\FileLoader;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
 use Symfony\Bundle\SecurityBundle\SecurityBundle;
@@ -20,24 +21,28 @@ use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\DependencyInjection\Loader\PhpFileLoader;
+use Santeacademie\SuperUploaderBundle\Super\Interfaces\VariantTansformerInterface;
+
 
 class SuperUploaderExtension extends Extension implements CompilerPassInterface
 {
 
     public function load(array $configs, ContainerBuilder $container): void
     {
-        $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
-        $loader->load('services.yaml');
-
-        $config = $this->processConfiguration(new Configuration(), $configs);
-        
-        $container->setParameter('super_uploader.twig_globals_enabled', $config['twig_globals_enabled'] ?? true);
-
-
         $loader = new PhpFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
         $loader->load('services.php');
 
+        $config = $this->processConfiguration(new Configuration(), $configs);
+
         $this->configurePersistence($loader, $container, $config);
+
+        foreach($config['mountpoints'] as $mntName => $mntValue) {
+            $container->setParameter('super_uploader.mountpoint.'.$mntName, $mntValue);
+        }
+        
+         $container->registerForAutoconfiguration(VariantTansformerInterface::class)
+            ->addTag('super_uploader.transformer')
+        ;
     }
 
     public function process(ContainerBuilder $container)

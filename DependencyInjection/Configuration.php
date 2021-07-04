@@ -26,12 +26,41 @@ class Configuration implements ConfigurationInterface
 
         $rootNode
             ->children()
+            ->append($this->createMountpointsNode())
             ->append($this->createPersistenceNode())
             ->append($this->createVariantEntityMapNode())
             ->end()
         ;
 
         return $treeBuilder;
+    }
+
+    private function createMountpointsNode(): ArrayNodeDefinition
+    {
+        $treeBuilder = new TreeBuilder('mountpoints');
+        $node = $treeBuilder->getRootNode();
+
+        $node
+            ->isRequired()
+            ->performNoDeepMerging()
+                ->children()
+                    ->scalarNode('uploads')
+                        ->cannotBeEmpty()
+                        ->defaultValue('uploads')
+                    ->end()
+                    ->scalarNode('resources')
+                        ->cannotBeEmpty()
+                        ->defaultValue('resources')
+                    ->end()
+                    ->scalarNode('temp')
+                        ->cannotBeEmpty()
+                        ->defaultValue('uploads/tmp')
+                    ->end()
+                ->end()
+            ->end()
+        ;
+
+        return $node;
     }
 
     private function createPersistenceNode(): ArrayNodeDefinition

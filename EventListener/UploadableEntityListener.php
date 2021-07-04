@@ -69,7 +69,7 @@ class UploadableEntityListener
         $entity = $args->getObject();
 
         if ($entity instanceof UploadableInterface) {
-            $this->uploadableEntityBridge->populateUploadableFields($entity);
+//            $this->uploadableEntityBridge->populateUploadableFields($entity);
         }
     }
 
