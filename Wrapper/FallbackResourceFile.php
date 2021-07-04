@@ -1,6 +1,6 @@
 <?php 
 
-namespace Santeacademie\SuperUploaderBundle\Super\Wrapper;
+namespace Santeacademie\SuperUploaderBundle\Wrapper;
 
 use Symfony\Component\HttpFoundation\File\File;
 

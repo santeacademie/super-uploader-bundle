@@ -21,7 +21,7 @@ use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\DependencyInjection\Loader\PhpFileLoader;
-use Santeacademie\SuperUploaderBundle\Super\Interfaces\VariantTansformerInterface;
+use Santeacademie\SuperUploaderBundle\Interface\VariantTansformerInterface;
 
 
 class SuperUploaderExtension extends Extension implements CompilerPassInterface

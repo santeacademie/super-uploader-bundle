@@ -23,7 +23,7 @@ use Santeacademie\SuperUploaderBundle\Transformer\FileTransformer;
 use Santeacademie\SuperUploaderBundle\Twig\UploaderTwigExtension;
 use Santeacademie\SuperUploaderBundle\Subscriber\UploadableSubscriber;
 use Santeacademie\SuperUploaderBundle\EventListener\UploadableEntityListener;
-use Santeacademie\SuperUploaderBundle\Super\Interfaces\VariantTansformerInterface;
+use Santeacademie\SuperUploaderBundle\Interface\VariantTansformerInterface;
 
 
 return static function (ContainerConfigurator $container): void {

@@ -4,7 +4,7 @@ namespace Santeacademie\SuperUploaderBundle\Twig;
 
 use Santeacademie\SuperUploaderBundle\Asset\Variant\AbstractVariant;
 use Santeacademie\SuperUploaderBundle\Bridge\UploadableEntityBridge;
-use Santeacademie\SuperUploaderBundle\Super\Interfaces\UploadableInterface;
+use Santeacademie\SuperUploaderBundle\Interface\UploadableInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 

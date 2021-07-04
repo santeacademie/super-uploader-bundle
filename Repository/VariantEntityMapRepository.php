@@ -8,7 +8,7 @@ use Santeacademie\SuperUploaderBundle\Asset\Variant\AbstractVariant;
 use Santeacademie\SuperUploaderBundle\Manager\VariantEntityMapManagerInterface;
 use Santeacademie\SuperUploaderBundle\Model\AbstractVariantEntityMap;
 use Santeacademie\SuperUploaderBundle\Model\VariantEntityMap;
-use Santeacademie\SuperUploaderBundle\Super\Interfaces\UploadableInterface;
+use Santeacademie\SuperUploaderBundle\Interface\UploadableInterface;
 
 use Symfony\Component\HttpFoundation\File\File;
 

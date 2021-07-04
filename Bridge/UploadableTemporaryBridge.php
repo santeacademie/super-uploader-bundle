@@ -2,8 +2,8 @@
 
 namespace Santeacademie\SuperUploaderBundle\Bridge;
 
-use Santeacademie\SuperUploaderBundle\Super\Wrapper\TemporaryFile;
-use Santeacademie\SuperUploaderBundle\Super\Interfaces\UploadableInterface;
+use Santeacademie\SuperUploaderBundle\Wrapper\TemporaryFile;
+use Santeacademie\SuperUploaderBundle\Interface\UploadableInterface;
 use Santeacademie\SuperUploaderBundle\Asset\Variant\AbstractVariant;
 use Santeacademie\SuperUtil\PathUtil;
 use Santeacademie\SuperUtil\StringUtil;

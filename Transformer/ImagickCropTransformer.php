@@ -3,8 +3,8 @@
 namespace Santeacademie\SuperUploaderBundle\Transformer;
 
 use Santeacademie\SuperUploaderBundle\Asset\Variant\AbstractVariant;
-use Santeacademie\SuperUploaderBundle\Super\Interfaces\UploadableInterface;
-use Santeacademie\SuperUploaderBundle\Super\Interfaces\VariantTansformerInterface;
+use Santeacademie\SuperUploaderBundle\Interface\UploadableInterface;
+use Santeacademie\SuperUploaderBundle\Interface\VariantTansformerInterface;
 use Symfony\Component\HttpFoundation\File\File;
 
 class ImagickCropTransformer implements VariantTansformerInterface

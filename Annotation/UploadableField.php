@@ -1,6 +1,6 @@
 <?php
 
-namespace Santeacademie\SuperUploaderBundle\Super\Annotation;
+namespace Santeacademie\SuperUploaderBundle\Annotation;
 
 use Santeacademie\SuperUploaderBundle\Asset\AbstractAsset;
 use Symfony\Component\Routing\Annotation;

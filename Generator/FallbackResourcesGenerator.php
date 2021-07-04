@@ -6,7 +6,7 @@ use Santeacademie\SuperUploaderBundle\Asset\AbstractAsset;
 use Santeacademie\SuperUploaderBundle\Asset\Variant\AbstractVariant;
 use Santeacademie\SuperUploaderBundle\Asset\Variant\PictureVariant;
 use Santeacademie\SuperUploaderBundle\Bridge\UploadableEntityBridge;
-use Santeacademie\SuperUploaderBundle\Super\Interfaces\UploadableInterface;
+use Santeacademie\SuperUploaderBundle\Interface\UploadableInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;

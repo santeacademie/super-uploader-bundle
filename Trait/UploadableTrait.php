@@ -1,10 +1,10 @@
 <?php 
 
-namespace Santeacademie\SuperUploaderBundle\Super\Traits;
+namespace Santeacademie\SuperUploaderBundle\Trait;
 
 use Santeacademie\SuperUploaderBundle\Asset\Variant\AbstractVariant;
 use Santeacademie\SuperUploaderBundle\Asset\AbstractAsset;
-use Santeacademie\SuperUploaderBundle\Super\Annotation\UploadableField;
+use Santeacademie\SuperUploaderBundle\Annotation\UploadableField;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Santeacademie\SuperUtil\PathUtil;
 use Symfony\Component\HttpFoundation\File\File;

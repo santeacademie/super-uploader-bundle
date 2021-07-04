@@ -3,9 +3,9 @@
 namespace Santeacademie\SuperUploaderBundle\Asset\Variant;
 
 use Santeacademie\SuperUploaderBundle\Asset\AbstractAsset;
-use Santeacademie\SuperUploaderBundle\Super\Interfaces\UploadableInterface;
-use Santeacademie\SuperUploaderBundle\Super\Wrapper\FallbackResourceFile;
-use Santeacademie\SuperUploaderBundle\Super\Wrapper\TemporaryFile;
+use Santeacademie\SuperUploaderBundle\Interface\UploadableInterface;
+use Santeacademie\SuperUploaderBundle\Wrapper\FallbackResourceFile;
+use Santeacademie\SuperUploaderBundle\Wrapper\TemporaryFile;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 
