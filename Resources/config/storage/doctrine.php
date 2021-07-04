@@ -5,6 +5,8 @@ use Santeacademie\SuperUploaderBundle\Persistence\Mapping\Driver;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use Santeacademie\SuperUploaderBundle\Manager\VariantEntityMapManagerInterface;
 use Santeacademie\SuperUploaderBundle\Manager\Doctrine\VariantEntityMapManager;
+use Santeacademie\SuperUploaderBundle\Repository\VariantEntityMapRepository;
+use Santeacademie\SuperUploaderBundle\Repository\VariantEntityMapRepositoryInterface;
 
 return static function (ContainerConfigurator $container): void {
     $container->services()
@@ -25,6 +27,12 @@ return static function (ContainerConfigurator $container): void {
         ->alias(VariantEntityMapManagerInterface::class, 'super_uploader.manager.doctrine.variant_entity_map')
         ->alias(VariantEntityMapManager::class, 'super_uploader.manager.doctrine.variant_entity_map')
 
+        ->set('super_uploader.repository.variant_entity_map', VariantEntityMapRepository::class)
+        ->args([
+            service(VariantEntityMapManagerInterface::class),
+        ])
+        ->alias(VariantEntityMapRepositoryInterface::class, 'super_uploader.repository.variant_entity_map')
+        ->alias(VariantEntityMapRepository::class, 'super_uploader.repository.variant_entity_map')
         
     ;
 };

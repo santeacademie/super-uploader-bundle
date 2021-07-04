@@ -5,9 +5,11 @@
 
 namespace Santeacademie\SuperUploaderBundle\DependencyInjection;
 
+use Santeacademie\SuperUploaderBundle\Bridge\UploadablePersistentBridge;
 use Santeacademie\SuperUploaderBundle\DependencyInjection\Configuration;
 use Santeacademie\SuperUploaderBundle\Manager\Doctrine\VariantEntityMapManager;
 use Santeacademie\SuperUploaderBundle\Persistence\Mapping\Driver;
+use Santeacademie\SuperUploaderBundle\Repository\VariantEntityMapRepository;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -68,6 +70,14 @@ class SuperUploaderExtension extends Extension implements CompilerPassInterface
      */
     private function configurePersistence(LoaderInterface $loader, ContainerBuilder $container, array $config): void
     {
+        $enabled = \count($config['persistence']) !== 0;
+
+        $container->setParameter('super_uploader.persistence.enabled', $enabled);
+
+        if (!$enabled) {
+            return;
+        }
+
         if (\count($config['persistence']) > 1) {
             throw new \LogicException('Only one persistence method can be configured at a time.');
         }
@@ -107,7 +117,11 @@ class SuperUploaderExtension extends Extension implements CompilerPassInterface
             ->replaceArgument(0, Client::class !== $config['variant_entity_map']['classname'])
             ->replaceArgument(1, $config['persistence']['doctrine']['table_name'])
             ->replaceArgument(2, $config['persistence']['doctrine']['schema_name'] ?? null)
+        ;
 
+        $container
+            ->findDefinition(UploadablePersistentBridge::class)
+            ->replaceArgument(4, $container->getDefinition('super_uploader.repository.variant_entity_map'))
         ;
 
         $container->setParameter('super_uploader.persistence.doctrine.enabled', true);

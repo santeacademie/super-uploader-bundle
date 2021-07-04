@@ -34,12 +34,7 @@ return static function (ContainerConfigurator $container): void {
         ->instanceof(VariantTansformerInterface::class)
             ->tag('super_uploader.transformer')
     
-        ->set('super_uploader.repository.variant_entity_map', VariantEntityMapRepository::class)
-        ->args([
-            service(VariantEntityMapManagerInterface::class),
-        ])
-        ->alias(VariantEntityMapRepositoryInterface::class, 'super_uploader.repository.variant_entity_map')
-        ->alias(VariantEntityMapRepository::class, 'super_uploader.repository.variant_entity_map')
+
 
             
         ->set('super_uploader.bridge.temporary', UploadableTemporaryBridge::class)
@@ -56,7 +51,7 @@ return static function (ContainerConfigurator $container): void {
             '%super_uploader.mountpoint.uploads%',
             service(Filesystem::class),
             service(UploadableTemporaryBridge::class),
-            service(VariantEntityMapRepository::class),
+            null,
         ])
         ->alias(UploadablePersistentBridge::class, 'super_uploader.bridge.persistent')
             
