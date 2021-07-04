@@ -32,19 +32,6 @@ super_uploader:
         classname: Santeacademie\SuperUploaderBundle\Model\VariantEntityMap
 ```
 
-- Manually configure twig themes `nano config/packages/twig.yaml`
-```yaml
-# config/packages/twig.yaml
-twig:
-    default_path: '%kernel.project_dir%/templates'
-    form_themes:
-        - 'uploader/form/uploadable_asset.html.twig'
-        - 'uploader/form/variant/document_variant_type.html.twig'
-        - 'uploader/form/variant/video_variant_type.html.twig'
-        - 'uploader/form/variant/imagick_crop_variant_type.html.twig'
-        - 'uploader/form/variant/imagick_ugly_variant_type.html.twig'
-```
-
 ## 2. Usage
 
 - Entity example

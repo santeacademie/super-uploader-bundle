@@ -28,7 +28,7 @@ use Santeacademie\SuperUploaderBundle\Super\Interfaces\VariantTansformerInterfac
 
 return static function (ContainerConfigurator $container): void {
     $services = $container->services();
-    
+
     $services
             
         ->instanceof(VariantTansformerInterface::class)

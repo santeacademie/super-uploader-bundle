@@ -29,6 +29,7 @@
 		"symfony/validator": "^5.0",
 		"santeacademie/super-util": "^1.0",
 		"santeacademie/super-select": "^1.0",
+		"symfony/twig-bundle": "^5.0",
 		"twig/twig": "^2.12|^3.0"
 	},
 	"require-dev": {

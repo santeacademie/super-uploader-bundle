@@ -6,6 +6,7 @@
 namespace Santeacademie\SuperUploaderBundle;
 
 use Santeacademie\SuperUploaderBundle\DependencyInjection\CompilerPass\RegisterDoctrineOrmMappingPass;
+use Santeacademie\SuperUploaderBundle\DependencyInjection\CompilerPass\TwigFormThemesPass;
 use Santeacademie\SuperUploaderBundle\DependencyInjection\SuperUploaderExtension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
@@ -35,5 +36,6 @@ class SuperUploaderBundle extends Bundle
     private function configureDoctrineExtension(ContainerBuilder $container): void
     {
         $container->addCompilerPass(new RegisterDoctrineOrmMappingPass());
+        $container->addCompilerPass(new TwigFormThemesPass());
     }
 }
