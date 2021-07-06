@@ -19,6 +19,7 @@ super_uploader:
 
     # Configures different persistence methods that can be used by the bundle for saving variant entity map.
     # Only one persistence method can be configured at a time.
+    # You can disable persistence by commenting all persistence methods
     persistence: # Required
         doctrine:
             # Name of the entity manager that you wish to use for managing variant entity map.
@@ -42,9 +43,9 @@ super_uploader:
 namespace App\Foo\Entity;
 
 use Santeacademie\SuperUploaderBundle\Asset\AbstractAsset;
-use Santeacademie\SuperUploaderBundle\Super\Interfaces\UploadableInterface;
-use Santeacademie\SuperUploaderBundle\Super\Traits\UploadableTrait;
-use Santeacademie\SuperUploaderBundle\Super\Annotation\UploadableField;
+use Santeacademie\SuperUploaderBundle\Interface\UploadableInterface;
+use Santeacademie\SuperUploaderBundle\Trait\UploadableTrait;
+use Santeacademie\SuperUploaderBundle\Annotation\UploadableField;
 
 class User implements UploadableInterface
 {
