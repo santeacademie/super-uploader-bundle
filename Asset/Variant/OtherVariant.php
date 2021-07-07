@@ -24,9 +24,4 @@ class OtherVariant extends AbstractVariant
     {
         return $this->label;
     }
-
-    public function getExtension(): string
-    {
-        return '';
-    }
 }

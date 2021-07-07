@@ -2,6 +2,9 @@
 
 namespace Santeacademie\SuperUploaderBundle\Bridge;
 
+use Santeacademie\SuperUploaderBundle\Asset\Variant\Interface\StaticExtensionVariantInterface;
+use Santeacademie\SuperUploaderBundle\Event\PersistentVariantCreatedEvent;
+use Santeacademie\SuperUploaderBundle\Event\PersistentVariantDeletedEvent;
 use Santeacademie\SuperUploaderBundle\Model\AbstractVariantEntityMap;
 use Santeacademie\SuperUploaderBundle\Model\VariantEntityMap;
 use Santeacademie\SuperUploaderBundle\Repository\VariantEntityMapRepository;
@@ -14,6 +17,7 @@ use Santeacademie\SuperUtil\StringUtil;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpFoundation\File\File;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class UploadablePersistentBridge extends AbstractUploadableBridge
 {
@@ -25,7 +29,8 @@ class UploadablePersistentBridge extends AbstractUploadableBridge
         protected string $uploadableMountpoint,
         protected Filesystem $filesystem,
         protected UploadableTemporaryBridge $uploadableTemporaryBridge,
-        protected ?VariantEntityMapRepository $variantEntityMapRepository
+        protected ?VariantEntityMapRepository $variantEntityMapRepository,
+        protected EventDispatcherInterface $eventDispatcher
     )
     {
         parent::__construct($appPublicDir);
@@ -34,44 +39,53 @@ class UploadablePersistentBridge extends AbstractUploadableBridge
     }
 
     // Move TemporaryAssetVariant files to AssetVariant (definitive persisted mountpoint)
+    public function persistTemporaryVariantFile(AbstractVariant $variant, UploadableInterface $uploadableEntity): AbstractVariant
+    {
+        $asset = $variant->getAsset();
+        $entityAssetPath = $this->getUploadEntityAssetPath($uploadableEntity, $asset, true);
+        $variantFileNamePrefix = $this->getVariantFileName($variant);
+
+        //variantFileName = $this->getVariantFileName($variant, $variant->getTemporaryFile()->guessExtension(), StringUtil::generateRandomPassword());
+        // Reuse old temporary name (important)
+        $variantFileName = $variant->getTemporaryFile()->getFilename();
+
+        if (!$variant instanceof StaticExtensionVariantInterface) {
+            $variantFileName .= '.'.$variant->getTemporaryFile()->guessExtension();
+        }
+
+        $variantFile = new File(sprintf('%s/%s', $entityAssetPath, $variantFileName), false);
+
+        // Delete old Variant file in Asset path
+        $this->filesystem->remove(Finder::create()->in($entityAssetPath)->files()->name("/^$variantFileNamePrefix/"));
+
+        // Move temporary Variant file in Asset path
+        $this->filesystem->copy($variant->getTemporaryFile(), $variantFile);
+
+        // Delete temporary artifacts (related to @ShowNoTransformation)
+        //$this->filesystem->remove($variant->getTemporaryFile());
+
+        // Link Variant file path to its object
+        $variant->setVariantFile($variantFile);
+
+        // Keep an eye on this variant on a database
+        if (!empty($this->variantEntityMapRepository)) {
+            $this->variantEntityMapRepository->persistVariantEntityMap(
+                $variant,
+                $this->generateVariantEntityMap($uploadableEntity, $variant)
+            );
+        }
+
+        $this->eventDispatcher->dispatch(new PersistentVariantCreatedEvent($variant, $uploadableEntity));
+
+        return $variant;
+    }
+
+    // Move TemporaryAssetVariant files to AssetVariant in bulk (definitive persisted mountpoint)
     public function persistTemporaryVariantFiles(UploadableInterface $uploadableEntity): array
     {
         return array_map(function($variant) use($uploadableEntity) {
             /** @var AbstractVariant $variant */
-
-            $asset = $variant->getAsset();
-            $entityAssetPath = $this->getUploadEntityAssetPath($uploadableEntity, $asset, true);
-            $variantFileNamePrefix = $this->getVariantFileName($variant);
-
-            //variantFileName = $this->getVariantFileName($variant, $variant->getTemporaryFile()->guessExtension(), StringUtil::generateRandomPassword());
-            // Reuse old temporary name (important)
-            $variantFileName = $variant->getExtension()
-                ? $variant->getTemporaryFile()->getFilename()
-                : $variant->getTemporaryFile()->getFilename() . '.' . $variant->getTemporaryFile()->guessExtension();
-
-            $variantFile = new File(sprintf('%s/%s', $entityAssetPath, $variantFileName), false);
-
-            // Delete old Variant file in Asset path
-            $this->filesystem->remove(Finder::create()->in($entityAssetPath)->files()->name("/^$variantFileNamePrefix/"));
-
-            // Move temporary Variant file in Asset path
-            $this->filesystem->copy($variant->getTemporaryFile(), $variantFile);
-
-            // Delete temporary artifacts (related to @ShowNoTransformation)
-            //$this->filesystem->remove($variant->getTemporaryFile());
-
-            // Link Variant file path to its object
-            $variant->setVariantFile($variantFile);
-
-            // Keep an eye on this variant on a database
-            if (!empty($this->variantEntityMapRepository)) {
-                $this->variantEntityMapRepository->persistVariantEntityMap(
-                    $variant,
-                    $this->generateVariantEntityMap($uploadableEntity, $variant)
-                );
-            }
-
-            return $variantFile;
+            return $this->persistTemporaryVariantFile($variant, $uploadableEntity)->getVariantFile();
         }, $this->uploadableTemporaryBridge->getIndexedEntityTemporaryVariants($uploadableEntity));
     }
 
@@ -115,19 +129,7 @@ class UploadablePersistentBridge extends AbstractUploadableBridge
             /** @var AbstractAsset $asset */
 
             foreach ($asset->getVariants() as $variant) {
-                /** @var AbstractVariant $variant */
-                $file = $variant->getVariantFile(false);
-                
-                if (is_null($file)) {
-                    continue;
-                }
-
-                if (!empty($this->variantEntityMapRepository)) {
-                    $this->variantEntityMapRepository->deleteEntityMapByFile($file);
-                }
-
-                $this->filesystem->remove($file);
-                $variant->setVariantFile(null);
+                $this->removeEntityVariantFile($variant, $uploadableEntity);
             }
         }
         
@@ -137,6 +139,30 @@ class UploadablePersistentBridge extends AbstractUploadableBridge
             $this->variantEntityMapRepository->deleteEntityMapByUploadableEntity($uploadableEntity);
         }
         */
+
+        return true;
+    }
+
+    public function removeEntityVariantFile(AbstractVariant $variant, UploadableInterface $uploadableEntity): bool
+    {
+        if (!$this->isEntityIndexedForDeletableVariants($uploadableEntity)) {
+            return false;
+        }
+
+        $file = $variant->getVariantFile(false);
+
+        if (is_null($file)) {
+            return false;
+        }
+
+        if (!empty($this->variantEntityMapRepository)) {
+            $this->variantEntityMapRepository->deleteEntityMapByFile($file);
+        }
+
+        $this->filesystem->remove($file);
+        $variant->setVariantFile(null);
+
+        $this->eventDispatcher->dispatch(new PersistentVariantDeletedEvent($variant, $uploadableEntity));
 
         return true;
     }

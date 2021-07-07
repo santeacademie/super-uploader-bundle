@@ -7,20 +7,16 @@ use Santeacademie\SuperUploaderBundle\Interface\UploadableInterface;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Contracts\EventDispatcher\Event;
 
-class UploadableWillChangeEvent extends Event
+abstract class AbstractVariantUpdateRequestEvent extends Event
 {
 
-    protected $oldValue;
-    protected $newValue;
-    protected $variant;
-    protected $uploadableEntity;
-
-    public function __construct(AbstractVariant $variant, UploadableInterface $uploadableEntity, ?File $oldValue, ?File $newValue)
+    public function __construct(
+        protected AbstractVariant $variant,
+        protected  UploadableInterface $uploadableEntity,
+        protected ?File $oldValue,
+        protected ?File $newValue
+    )
     {
-        $this->variant = $variant;
-        $this->uploadableEntity = $uploadableEntity;
-        $this->oldValue = $oldValue;
-        $this->newValue = $newValue;
 
     }
 

@@ -2,11 +2,11 @@
 
 namespace Santeacademie\SuperUploaderBundle\Subscriber;
 
-use Santeacademie\SuperUploaderBundle\Bridge\UploadableEntityBridge;
-use Santeacademie\SuperUploaderBundle\Event\UploadableDeletedEvent;
-use Santeacademie\SuperUploaderBundle\Event\UploadablePersistedEvent;
+use Santeacademie\SuperUploaderBundle\Event\PersistentVariantPreCreateEvent;
+use Santeacademie\SuperUploaderBundle\Event\PersistentVariantPreDeleteEvent;
 use Santeacademie\SuperUploaderBundle\Bridge\UploadablePersistentBridge;
 use Santeacademie\SuperUploaderBundle\Bridge\UploadableTemporaryBridge;
+use Santeacademie\SuperUploaderBundle\Event\UploadableEntityDeletedEvent;
 use Santeacademie\SuperUtil\LambdaUtil;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -24,26 +24,29 @@ class UploadableSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return array_reduce([
-            UploadablePersistedEvent::class,
-            UploadableDeletedEvent::class,
+            PersistentVariantPreCreateEvent::class,
+            PersistentVariantPreDeleteEvent::class,
+            UploadableEntityDeletedEvent::class
         ], LambdaUtil::classnamesToEventsSubscriptions());
     }
 
-    public function onUploadablePersistedEvent(UploadablePersistedEvent $event)
+    public function onPersistentVariantPreCreateEvent(PersistentVariantPreCreateEvent $event)
     {
         // Persist temporary files on the Pipe
-        $files = $this->uploadablePersistentBridge->persistTemporaryVariantFiles($event->getUploadableEntity());
+        $this->uploadablePersistentBridge->persistTemporaryVariantFile($event->getVariant(), $event->getUploadableEntity());
 
         // Remove temporary files from the Pipe
-        $this->uploadableTemporaryBridge->removeIndexedEntityWithTemporaryVariants($event->getUploadableEntity());
+        $this->uploadableTemporaryBridge->removeVariantByEntityFromIndex($event->getVariant(), $event->getUploadableEntity());
     }
 
-    public function onUploadableDeletedEvent(UploadableDeletedEvent $event)
+    public function onPersistentVariantPreDeleteEvent(PersistentVariantPreDeleteEvent $event)
     {
         // Remove persisted files on the Pipe
-        $this->uploadablePersistentBridge->removeEntityVariantFiles($event->getUploadableEntity());
+        $this->uploadablePersistentBridge->removeEntityVariantFile($event->getVariant(), $event->getUploadableEntity());
+    }
 
-        // Flush deletable file from the Pipe
+    public function onUploadableEntityDeletedEvent(UploadableEntityDeletedEvent $event)
+    {
         $this->uploadablePersistentBridge->removeIndexedEntityWithDeletableVariants($event->getUploadableEntity());
     }
 

@@ -1,15 +1,20 @@
 Changelog
 =
 
+> **2.0**
+- Breaking changes: new workflow for variants with new events
+- Cleaner extension guesser for TemporaryVariant files
+- Generic dbmap command
+
 > **1.3**
-- Ajout automatique de l'extension au TemporaryVariantFile
-- Retour string vide pour la methode getExtension de OtherVariant
+- Extension guesser for TemporaryVariant files
+- Empty string for getExtension implementation of OtherVariant
 
 > **1.2**
-- Création du variant Other
+- New variant "OtherVariant"
 
 > **1.1**
-- Modification du README
+- README edit
 
 > **1.0**
 - Setup
