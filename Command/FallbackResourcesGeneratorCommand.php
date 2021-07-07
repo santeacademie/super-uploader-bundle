@@ -15,7 +15,9 @@ class FallbackResourcesGeneratorCommand extends Command
     protected static $defaultName = 'santeacademie:super-uploader:generate:fallbacks';
 
 
-    public function __construct(private FallbackResourcesGenerator $fallbackResourcesGenerator)
+    public function __construct(
+        private FallbackResourcesGenerator $fallbackResourcesGenerator
+    )
     {
         parent::__construct();
     }

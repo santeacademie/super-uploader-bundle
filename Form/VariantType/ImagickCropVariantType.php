@@ -14,13 +14,12 @@ use Symfony\Component\Validator\Constraints\Type;
 class ImagickCropVariantType extends AbstractVariantType
 {
 
-    private $transformer;
 
     public function __construct(
-        ImagickCropTransformer $transformer
+        private ImagickCropTransformer $transformer
     )
     {
-        $this->transformer = $transformer;
+
     }
 
     public function getTransformer(): VariantTansformerInterface

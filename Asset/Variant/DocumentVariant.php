@@ -3,7 +3,7 @@
 namespace Santeacademie\SuperUploaderBundle\Asset\Variant;
 
 use Santeacademie\SuperUploaderBundle\Form\AbstractVariantType;
-use Santeacademie\SuperUploaderBundle\Interface\StaticExtensionVariantInterface;
+use Santeacademie\SuperUploaderBundle\Asset\Variant\Interface\StaticExtensionVariantInterface;
 
 class DocumentVariant extends AbstractVariant implements StaticExtensionVariantInterface
 {

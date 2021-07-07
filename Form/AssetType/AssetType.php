@@ -4,7 +4,7 @@ namespace Santeacademie\SuperUploaderBundle\Form\AssetType;
 
 use Santeacademie\SuperUploaderBundle\Asset\Variant\AbstractVariant;
 use Santeacademie\SuperUploaderBundle\Bridge\UploadableEntityBridge;
-use Santeacademie\SuperUploaderBundle\Event\UploadableWillChangeEvent;
+use Santeacademie\SuperUploaderBundle\Event\VariantFormUpdateRequestEvent;
 use Santeacademie\SuperUploaderBundle\Wrapper\TemporaryFile;
 use Santeacademie\SuperUploaderBundle\Interface\UploadableInterface;
 use Santeacademie\SuperUploaderBundle\Form\AbstractAssetType;
@@ -25,19 +25,14 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 class AssetType extends AbstractAssetType
 {
 
-    private $uploadableTemporaryBridge;
-    private $uploadableEntityBridge;
-    private $eventDispatcher;
-
     public function __construct(
-        UploadableTemporaryBridge $uploadableTemporaryBridge,
-        UploadableEntityBridge $uploadableEntityBridge,
-        EventDispatcherInterface $eventDispatcher
+        private UploadableTemporaryBridge $uploadableTemporaryBridge,
+        private UploadableEntityBridge $uploadableEntityBridge,
+        private EventDispatcherInterface $eventDispatcher
     )
     {
-        $this->uploadableTemporaryBridge = $uploadableTemporaryBridge;
-        $this->uploadableEntityBridge = $uploadableEntityBridge;
-        $this->eventDispatcher = $eventDispatcher;
+
+
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
@@ -131,26 +126,31 @@ class AssetType extends AbstractAssetType
                 }
 
                 $data[$variantName]['variantFile'] = $file;
-                $temporaryVariantPreTransformedFile = $this->uploadableTemporaryBridge->genuineToTemporaryVariantFile($file, $variant, $uploadableEntity);
 
-                // Transformations
-                /** @var AbstractVariantType $variantTypeClass */
-                $variantTypeClass = $variantTypeForm->getConfig()->getType()->getInnerType();
+                $transformerCallback = function(AbstractVariant $variant, TemporaryFile $temporaryFile) use($variantTypeForm, $variantTypeData) {
+                    // Transformations
+                    /** @var AbstractVariantType $variantTypeClass */
+                    $variantTypeClass = $variantTypeForm->getConfig()->getType()->getInnerType();
 
-                // Default "Identity" transformer (null transformer)
-                $transformedFile = $temporaryVariantPreTransformedFile;
+                    // Default "Identity" transformer (null transformer)
+                    $transformedFile = $temporaryFile;
 
-                if (null !== $transformer = $variantTypeClass->getTransformer()) {
-                    $transformedFile = $transformer->transformFile($temporaryVariantPreTransformedFile, $variant, $variantTypeData);
-                }
+                    if (null !== $transformer = $variantTypeClass->getTransformer()) {
+                        $transformedFile = $transformer->transformFile($temporaryFile, $variant, $variantTypeData);
+                    }
+
+                    return $transformedFile;
+                };
+
+                $temporaryVariantFile = $this->uploadableTemporaryBridge->genuineToTemporaryVariantFile($file, $variant, $uploadableEntity, $transformerCallback);
 
                 // 2 fields (temporaryFile & variantFile) in variantType form means straightforward transformation with no customization from user,
                 // so show transformed file instead (Related to @ShowNoTransformation)
                 if ($variantTypeForm->count() == 2) {
-                    $data[$variantName]['variantFile'] = $transformedFile;
+                    $data[$variantName]['variantFile'] = $temporaryVariantFile;
                 }
 
-                $this->eventDispatcher->dispatch(new UploadableWillChangeEvent($variant, $uploadableEntity, $oldValue, $transformedFile));
+                $this->eventDispatcher->dispatch(new VariantFormUpdateRequestEvent($variant, $uploadableEntity, $variant->getVariantFile(), $temporaryVariantFile));
             }
 
             $event->setData($data);

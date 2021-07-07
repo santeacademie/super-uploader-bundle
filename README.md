@@ -201,11 +201,10 @@ class FooController extends AbstractController
     {
         $variantUser = $user->profilePicture->getVariant(ProfilePictureAsset::VARIANT_LANDSCAPE);
         
-        $uploadableEntityBridge->directUpload(
+        $uploadableEntityBridge->manualUpload(
             entity: $registration, 
             variant: $variantRegistration, 
-            fileOrBinary: $request->files->get('profile_picture'), 
-            dispatchEvent: true
+            fileOrBinary: $request->files->get('profile_picture')
         );
 
         return new Response(sprintf('Profile picture uploaded for user %s !', $user->getEmail()));

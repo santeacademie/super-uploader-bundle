@@ -2,8 +2,9 @@
 
 namespace Santeacademie\SuperUploaderBundle\Bridge;
 
-use App\Core\Super\Entity\ListenableEntityInterface;
 use Santeacademie\SuperUploaderBundle\Asset\AbstractAsset;
+use Santeacademie\SuperUploaderBundle\Event\PersistentVariantPreCreateEvent;
+use Santeacademie\SuperUploaderBundle\Event\VariantManualUpdateRequestEvent;
 use Santeacademie\SuperUploaderBundle\Interface\UploadableInterface;
 use Santeacademie\SuperUploaderBundle\Asset\Variant\AbstractVariant;
 use Santeacademie\SuperUploaderBundle\Wrapper\FallbackResourceFile;
@@ -157,23 +158,30 @@ class UploadableEntityBridge extends AbstractUploadableBridge
         return $dir;
     }
 
-    public function directUpload(
-        UploadableInterface|ListenableEntityInterface $entity,
+    public function manualUpload(
+        UploadableInterface $entity,
         AbstractVariant $variant,
         File|string $fileOrBinary,
-        bool $dispatchEvent = true
+        bool $flush = true
     ): void
     {
         if (is_string($fileOrBinary)) {
             $fileOrBinary = FileUtil::fileFromContent($fileOrBinary);
         }
 
-        $this->uploadableTemporaryBridge->genuineToTemporaryVariantFile($fileOrBinary, $variant, $entity);
-        $this->uploadablePersistentBridge->persistTemporaryVariantFiles($entity);
+        $temporaryVariantFile = $this->uploadableTemporaryBridge->genuineToTemporaryVariantFile($fileOrBinary, $variant, $entity);
 
-        if ($dispatchEvent) {
-            $eventClass = $entity->getUpdatedEventClass();
-            $this->eventDispatcher->dispatch(new $eventClass($entity));
+        $oldValue = $this->getEntityAssetVariantFile(
+            entity: $entity,
+            asset: $variant->getAsset(),
+            variant: $variant,
+            fallbackResource: false
+        );
+
+        $this->eventDispatcher->dispatch(new VariantManualUpdateRequestEvent($variant, $entity, $oldValue, $temporaryVariantFile));
+
+        if ($flush) {
+            $this->eventDispatcher->dispatch(new PersistentVariantPreCreateEvent($variant, $entity));
         }
     }
 

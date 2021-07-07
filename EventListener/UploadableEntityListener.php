@@ -2,10 +2,12 @@
 
 namespace Santeacademie\SuperUploaderBundle\EventListener;
 
+use Santeacademie\SuperUploaderBundle\Asset\AbstractAsset;
 use Santeacademie\SuperUploaderBundle\Bridge\UploadableEntityBridge;
+use Santeacademie\SuperUploaderBundle\Event\PersistentVariantPreCreateEvent;
+use Santeacademie\SuperUploaderBundle\Event\PersistentVariantPreDeleteEvent;
+use Santeacademie\SuperUploaderBundle\Event\UploadableEntityDeletedEvent;
 use Santeacademie\SuperUploaderBundle\Interface\UploadableInterface;
-use Santeacademie\SuperUploaderBundle\Event\UploadableDeletedEvent;
-use Santeacademie\SuperUploaderBundle\Event\UploadablePersistedEvent;
 use Santeacademie\SuperUploaderBundle\Bridge\UploadablePersistentBridge;
 use Santeacademie\SuperUploaderBundle\Bridge\UploadableTemporaryBridge;
 use Doctrine\ORM\Event\LifecycleEventArgs;
@@ -30,13 +32,21 @@ class UploadableEntityListener
     {
         foreach ($this->uploadableTemporaryBridge->getIndexedEntitiesWithTemporaryVariants() as $entity) {
             if ($entity instanceof UploadableInterface) {
-                $this->eventDispatcher->dispatch(new UploadablePersistedEvent($entity));
+                foreach($this->uploadableTemporaryBridge->getIndexedEntityTemporaryVariants($entity) as $variant) {
+                    $this->eventDispatcher->dispatch(new PersistentVariantPreCreateEvent($variant, $entity));
+                }
             }
         }
 
         foreach ($this->uploadablePersistentBridge->getIndexedEntitiesWithDeletableVariants() as $entity) {
             if ($entity instanceof UploadableInterface) {
-                $this->eventDispatcher->dispatch(new UploadableDeletedEvent($entity));
+                foreach ($entity->getLoadUploadableAssets() as $asset) {
+                    foreach ($asset->getVariants() as $variant) {
+                        $this->eventDispatcher->dispatch(new PersistentVariantPreDeleteEvent($variant, $entity));
+                    }
+                }
+
+                $this->eventDispatcher->dispatch(new UploadableEntityDeletedEvent($entity));
             }
         }
     }

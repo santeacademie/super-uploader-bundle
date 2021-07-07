@@ -42,6 +42,7 @@ return static function (ContainerConfigurator $container): void {
             '%kernel.project_dir%/public',
             '%super_uploader.mountpoint.temp%',
             service(Filesystem::class),
+            service(EventDispatcherInterface::class),
         ])
         ->alias(UploadableTemporaryBridge::class, 'super_uploader.bridge.temporary')
             
@@ -52,6 +53,7 @@ return static function (ContainerConfigurator $container): void {
             service(Filesystem::class),
             service(UploadableTemporaryBridge::class),
             null,
+            service(EventDispatcherInterface::class)
         ])
         ->alias(UploadablePersistentBridge::class, 'super_uploader.bridge.persistent')
             

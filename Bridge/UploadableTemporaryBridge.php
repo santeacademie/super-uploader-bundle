@@ -2,6 +2,8 @@
 
 namespace Santeacademie\SuperUploaderBundle\Bridge;
 
+use Santeacademie\SuperUploaderBundle\Event\TemporaryVariantCreatedEvent;
+use Santeacademie\SuperUploaderBundle\Event\TemporaryVariantPreCreateEvent;
 use Santeacademie\SuperUploaderBundle\Wrapper\TemporaryFile;
 use Santeacademie\SuperUploaderBundle\Interface\UploadableInterface;
 use Santeacademie\SuperUploaderBundle\Asset\Variant\AbstractVariant;
@@ -11,6 +13,7 @@ use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class UploadableTemporaryBridge extends AbstractUploadableBridge
 {
@@ -22,7 +25,8 @@ class UploadableTemporaryBridge extends AbstractUploadableBridge
     public function __construct(
         string $appPublicDir,
         protected string $uploadableTemporaryMountpoint,
-        protected Filesystem $filesystem
+        protected Filesystem $filesystem,
+        protected EventDispatcherInterface $eventDispatcher
     )
     {
         parent::__construct($appPublicDir);
@@ -50,9 +54,12 @@ class UploadableTemporaryBridge extends AbstractUploadableBridge
     public function genuineToTemporaryVariantFile(
         File $genuineFile,
         AbstractVariant $variant,
-        UploadableInterface $uploadableEntity
+        UploadableInterface $uploadableEntity,
+        ?callable $transformerCallback = null
     ): TemporaryFile
     {
+        $this->eventDispatcher->dispatch(new TemporaryVariantPreCreateEvent($variant, $uploadableEntity));
+
         $temporaryFullName = sprintf('%s/%s',
             $this->getTemporaryPath(true, $variant->getAsset()->getMediaType()),
             $this->getVariantFileName($variant, $variant->getExtension(), StringUtil::generateRandomPassword())
@@ -69,7 +76,15 @@ class UploadableTemporaryBridge extends AbstractUploadableBridge
         // Persist temporary Variant file based on genuine one
         $this->filesystem->copy($genuineFile, $temporaryVariantFile);
 
-        return $variant->getTemporaryFile();
+        $temporaryFile = $variant->getTemporaryFile();
+
+        if (is_callable($transformerCallback)) {
+            $temporaryFile = $transformerCallback($variant, $temporaryFile);
+        }
+
+        $this->eventDispatcher->dispatch(new TemporaryVariantCreatedEvent($variant, $uploadableEntity));
+
+        return $temporaryFile;
     }
 
     private function indexTemporaryEntityVariant(UploadableInterface $uploadableEntity, AbstractVariant $variant)
@@ -81,7 +96,7 @@ class UploadableTemporaryBridge extends AbstractUploadableBridge
             ];
         }
 
-        $this->temporaryEntityVariantsIndex[spl_object_hash($uploadableEntity)]['variants'][] = $variant;
+        $this->temporaryEntityVariantsIndex[spl_object_hash($uploadableEntity)]['variants'][$variant->getName()] = $variant;
     }
 
     public function getIndexedEntitiesWithTemporaryVariants()
@@ -96,6 +111,18 @@ class UploadableTemporaryBridge extends AbstractUploadableBridge
         return $this->temporaryEntityVariantsIndex[spl_object_hash($uploadableEntity)]['variants'] ?? [];
     }
 
+    public function removeVariantByEntityFromIndex(AbstractVariant $variant, UploadableInterface $uploadableEntity): bool
+    {
+        $variants = $this->getIndexedEntitiesWithTemporaryVariants();
+
+        if (isset($variants[$variant->getName()])) {
+            unset($this->temporaryEntityVariantsIndex[spl_object_hash($uploadableEntity)]['variants'][$variant->getName()]);
+            return true;
+        }
+
+        return false;
+    }
+
     public function removeIndexedEntityWithTemporaryVariants(UploadableInterface $uploadableEntity): bool
     {
         if (isset($this->temporaryEntityVariantsIndex[spl_object_hash($uploadableEntity)])) {
@@ -105,6 +132,7 @@ class UploadableTemporaryBridge extends AbstractUploadableBridge
 
         return false;
     }
+
 
 
 

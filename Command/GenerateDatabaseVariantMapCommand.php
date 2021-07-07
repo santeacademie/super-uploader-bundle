@@ -2,17 +2,11 @@
 
 namespace Santeacademie\SuperUploaderBundle\Command;
 
-use App\Catalog\Entity\Course;
-use App\Customer\Entity\Contact;
-use App\Customer\Entity\Registration;
-use App\External\Entity\Job;
-use App\External\Entity\Trainer;
+
 use Santeacademie\SuperUploaderBundle\Asset\AbstractAsset;
 use Santeacademie\SuperUploaderBundle\Asset\Variant\AbstractVariant;
-use Santeacademie\SuperUploaderBundle\Asset\Variant\PictureVariant;
 use Santeacademie\SuperUploaderBundle\Bridge\UploadableEntityBridge;
 use Santeacademie\SuperUploaderBundle\Bridge\UploadablePersistentBridge;
-use Santeacademie\SuperUploaderBundle\Model\VariantEntityMap;
 use Santeacademie\SuperUploaderBundle\Interface\UploadableInterface;
 use Santeacademie\SuperUploaderBundle\Repository\VariantEntityMapRepository;
 use Santeacademie\SuperUploaderBundle\Wrapper\FallbackResourceFile;
@@ -21,18 +15,13 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 class GenerateDatabaseVariantMapCommand extends Command
 {
 
-    private static $entities = [
-        Contact::class,
-        Course::class,
-        Job::class,
-        Registration::class,
-        Trainer::class
-    ];
+
 
     protected static $defaultName = 'santeacademie:super-uploader:generate:dbmap';
 
@@ -54,12 +43,46 @@ class GenerateDatabaseVariantMapCommand extends Command
     {
         $this
             ->setDescription('Generate database variant entity maps based on filesystem upload directory')
-            ->setHelp('This command allows you to generate database variant entity maps based on filesystem upload directory');
+            ->setHelp('This command allows you to generate database variant entity maps based on filesystem upload directory')
+            ->addOption('class', 'c', InputOption::VALUE_OPTIONAL, 'Classes separated by comma');
+        ;
+    }
+
+    private static function normalizeClass(?string $class): string
+    {
+        return str_replace('/', '\\', $class ?? '');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
+
+        $classes = [];
+        $class = self::normalizeClass($input->getOption('class'));
+
+        if (empty($class)) {
+            do {
+                $class = self::normalizeClass($io->askQuestion(new Question('What class do you want to add ? (empty for skip)', '')));
+
+                if (class_exists($class)) {
+                    $classes[] = $class;
+                } elseif (!empty($class)) {
+                    $io->warning(sprintf('Class \'%s\' doesn\'t exist.', $class));
+                }
+            } while(!empty($class));
+        } else {
+            if (class_exists($class)) {
+                $classes[] = $class;
+            } elseif (!empty($class)) {
+                $io->error(sprintf('Class \'%s\' doesn\'t exist.', $class));
+                return Command::FAILURE;
+            }
+        }
+
+        if (empty($classes)) {
+            $io->error('No valid class were given.');
+            return Command::FAILURE;
+        }
 
         $output->writeln([
             '',
@@ -70,9 +93,16 @@ class GenerateDatabaseVariantMapCommand extends Command
         ]);
 
         $io->write('Build variant entity map items...');
-        $counter = 0;
 
-        foreach(self::$entities as $entityClass) {
+        foreach($classes as $entityClass) {
+            $counter = 0;
+
+
+            if (!class_implements($entityClass, UploadableInterface::class)) {
+                $io->warning(sprintf('Class \'%s\' doesn\'t implements %s. Skipping.', $entityClass, UploadableInterface::class));
+                continue;
+            }
+
             /** @var UploadableInterface $entityObject */
             foreach ($this->entityManager->getRepository($entityClass)->findAll() as $entityObject) {
                 /** @var UploadableInterface $entityObject */
@@ -102,9 +132,10 @@ class GenerateDatabaseVariantMapCommand extends Command
                     }
                 }
             }
+
+            $io->success(sprintf('%s item(s) created for class %s', $counter, $entityClass));
         }
 
-        $io->success($counter . ' item(s) created');
 
         return Command::SUCCESS;
     }

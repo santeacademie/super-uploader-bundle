@@ -14,14 +14,11 @@ use Symfony\Component\HttpFoundation\File\File;
 
 final class VariantEntityMapRepository implements VariantEntityMapRepositoryInterface
 {
-    /**
-     * @var VariantEntityMapManagerInterface
-     */
-    private $variantEntityMapManager;
 
-    public function __construct(VariantEntityMapManager $variantEntityMapManager)
+
+    public function __construct(protected VariantEntityMapManager $variantEntityMapManager)
     {
-        $this->variantEntityMapManager = $variantEntityMapManager;
+
     }
 
     public function persistVariantEntityMap(AbstractVariant $variant, AbstractVariantEntityMap $map): void

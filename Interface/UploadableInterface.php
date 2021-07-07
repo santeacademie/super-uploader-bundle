@@ -9,6 +9,9 @@ use Symfony\Component\HttpFoundation\File\File;
 
 interface UploadableInterface extends GuessableEntityIdentifierInterface
 {
+    /**
+     * @return array|AbstractAsset[]
+     */
     public function getLoadUploadableAssets(): array;
 
     public function getUploadableAssetByName(string $assetName): AbstractAsset;
