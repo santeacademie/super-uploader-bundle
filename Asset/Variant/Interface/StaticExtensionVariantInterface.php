@@ -1,6 +1,6 @@
 <?php
 
-namespace Santeacademie\SuperUploaderBundle\Interface;
+namespace Santeacademie\SuperUploaderBundle\Asset\Variant\Interface;
 
 interface StaticExtensionVariantInterface
 {

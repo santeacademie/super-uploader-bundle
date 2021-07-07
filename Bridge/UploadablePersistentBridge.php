@@ -2,7 +2,7 @@
 
 namespace Santeacademie\SuperUploaderBundle\Bridge;
 
-use Santeacademie\SuperUploaderBundle\Interface\StaticExtensionVariantInterface;
+use Santeacademie\SuperUploaderBundle\Asset\Variant\Interface\StaticExtensionVariantInterface;
 use Santeacademie\SuperUploaderBundle\Model\AbstractVariantEntityMap;
 use Santeacademie\SuperUploaderBundle\Model\VariantEntityMap;
 use Santeacademie\SuperUploaderBundle\Repository\VariantEntityMapRepository;
