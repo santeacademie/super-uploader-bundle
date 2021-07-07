@@ -2,9 +2,10 @@ Changelog
 =
 
 > **2.0**
-- Breaking changes: new workflow for variants with new events
-- Cleaner extension guesser for TemporaryVariant files
-- Generic dbmap command
+- `[BreakingChanges]` New workflow for variants with new events
+- `[Codestyle]` Cleaner extension guesser for TemporaryVariant files
+- `[Improvment]` Generic dbmap command
+- `[Feature]` UploadableKey annotation
 
 > **1.3**
 - Extension guesser for TemporaryVariant files

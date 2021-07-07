@@ -46,11 +46,16 @@ use Santeacademie\SuperUploaderBundle\Asset\AbstractAsset;
 use Santeacademie\SuperUploaderBundle\Interface\UploadableInterface;
 use Santeacademie\SuperUploaderBundle\Trait\UploadableTrait;
 use Santeacademie\SuperUploaderBundle\Annotation\UploadableField;
+use Santeacademie\SuperUploaderBundle\Annotation\UploadableKey;
 
 class User implements UploadableInterface
 {
     use UploadableTrait;
 
+    /**
+     * @UploadableKey
+     */
+    private string $id;
     private string $firstname;
     private string $lastname;
     private string $email;

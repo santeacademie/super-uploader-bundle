@@ -7,7 +7,7 @@ use Symfony\Component\Routing\Annotation;
 use Doctrine\Common\Annotations\Annotation\Target;
 
 /**
- * Annotation class for SelectOption
+ * Annotation class for UploadableTrait
  *
  * @Annotation
  * @Target({"ALL"})

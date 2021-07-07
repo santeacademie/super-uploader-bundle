@@ -97,7 +97,7 @@ final class VariantEntityMapRepository implements VariantEntityMapRepositoryInte
                 ->where('e.entityClass = :entityClass')
                 ->andWhere('e.entityIdentifier = :entityIdentifier')
                 ->setParameter('entityClass', get_class($uploadableEntity))
-                ->setParameter('entityIdentifier', $uploadableEntity->getEntityIdentifierValue())
+                ->setParameter('entityIdentifier', $uploadableEntity->getUploadableKeyValue())
         ;
 
         $qb->getQuery()->getResult();

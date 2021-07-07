@@ -2,12 +2,9 @@
 
 namespace Santeacademie\SuperUploaderBundle\Interface;
 
-use App\Core\Super\Entity\GuessableEntityIdentifierInterface;
-use Santeacademie\SuperUploaderBundle\Asset\Variant\AbstractVariant;
 use Santeacademie\SuperUploaderBundle\Asset\AbstractAsset;
-use Symfony\Component\HttpFoundation\File\File;
 
-interface UploadableInterface extends GuessableEntityIdentifierInterface
+interface UploadableInterface
 {
     /**
      * @return array|AbstractAsset[]
@@ -19,4 +16,8 @@ interface UploadableInterface extends GuessableEntityIdentifierInterface
     public function getUploadEntityPath(): string;
 
     public function getUploadEntityToken(): ?string;
+
+    public function getUploadableKeyName(): string;
+
+    public function getUploadableKeyValue(): string;
 }
