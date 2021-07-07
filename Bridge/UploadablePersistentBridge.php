@@ -96,7 +96,7 @@ class UploadablePersistentBridge extends AbstractUploadableBridge
 
         $variantEntityMap = (new VariantEntityMap())
             ->setEntityClass(PathUtil::sanitizeForProxy(get_class($uploadableEntity)))
-            ->setEntityIdentifier("".$uploadableEntity->getEntityIdentifierValue())
+            ->setEntityIdentifier("".$uploadableEntity->getUploadableKeyValue())
             ->setFullPath($variantFile->getPathname())
             ->setAssetName($asset->getName())
             ->setVariantName($variant->getName())
@@ -169,7 +169,7 @@ class UploadablePersistentBridge extends AbstractUploadableBridge
 
     public function indexEntityVariantsToDelete(UploadableInterface $uploadableEntity): void
     {
-        $this->uploadableEntitiesWithDeletableVariantsIndex[$uploadableEntity->getEntityIdentifierValue()] = $uploadableEntity;
+        $this->uploadableEntitiesWithDeletableVariantsIndex[$uploadableEntity->getUploadableKeyValue()] = $uploadableEntity;
     }
 
     public function getIndexedEntitiesWithDeletableVariants(): array
@@ -179,13 +179,13 @@ class UploadablePersistentBridge extends AbstractUploadableBridge
 
     public function isEntityIndexedForDeletableVariants(UploadableInterface $uploadableEntity): bool
     {
-        return isset($this->uploadableEntitiesWithDeletableVariantsIndex[$uploadableEntity->getEntityIdentifierValue()]);
+        return isset($this->uploadableEntitiesWithDeletableVariantsIndex[$uploadableEntity->getUploadableKeyValue()]);
     }
 
     public function removeIndexedEntityWithDeletableVariants(UploadableInterface $uploadableEntity): bool
     {
-        if (isset($this->uploadableEntitiesWithDeletableVariantsIndex[$uploadableEntity->getEntityIdentifierValue()])) {
-            unset($this->uploadableEntitiesWithDeletableVariantsIndex[$uploadableEntity->getEntityIdentifierValue()]);
+        if (isset($this->uploadableEntitiesWithDeletableVariantsIndex[$uploadableEntity->getUploadableKeyValue()])) {
+            unset($this->uploadableEntitiesWithDeletableVariantsIndex[$uploadableEntity->getUploadableKeyValue()]);
             return true;
         }
 

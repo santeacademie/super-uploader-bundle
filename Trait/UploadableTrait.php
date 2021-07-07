@@ -1,44 +1,113 @@
-<?php 
+<?php
 
 namespace Santeacademie\SuperUploaderBundle\Trait;
 
+use Santeacademie\SuperUploaderBundle\Annotation\UploadableKey;
 use Santeacademie\SuperUploaderBundle\Asset\Variant\AbstractVariant;
 use Santeacademie\SuperUploaderBundle\Asset\AbstractAsset;
 use Santeacademie\SuperUploaderBundle\Annotation\UploadableField;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Santeacademie\SuperUtil\PathUtil;
+use Santeacademie\SuperUtil\StringUtil;
 use Symfony\Component\HttpFoundation\File\File;
 
 trait UploadableTrait
 {
 
+    private static $uploadableKey = null;
+    private static $uploadableKeySplitLength = UploadableKey::DEFAULT_SPLIT_LENGTH;
     private $uploadableFields = [];
 
-    private function readUploadableAnnotations(): array
+    public function getUploadableKeyName(): string
+    {
+        if (empty(self::$uploadableKey)) {
+            $this->readUploadableKeyAnnotation();
+        }
+
+        return self::$uploadableKey;
+    }
+
+    public function getUploadableKeyValue(): string
+    {
+        $keyName = $this->getUploadableKeyName();
+
+        $keyGetter = 'get'.StringUtil::anyToCamelCase($keyName, true);
+
+        if (!method_exists($this, $keyGetter)) {
+            throw new \LogicException(sprintf('UploadableKey \'%s\' doesn\'t have getter method \'%s()\' on class \'%s\'', $keyName, $keyGetter, get_class($this)));
+        }
+
+        return $this->{$keyGetter}();
+    }
+
+    private function readUploadableKeyAnnotation(): void
     {
         $reflectionClass = new \ReflectionClass(get_called_class());
+        $annotations = [];
 
-        $annotations = array_map(function($scope) use($reflectionClass) {
+        foreach([\ReflectionProperty::IS_PUBLIC, \ReflectionProperty::IS_PRIVATE] as $scope) {
             $props = $reflectionClass->getProperties($scope);
             $reader = new AnnotationReader();
 
-            return array_filter(array_map(function (\ReflectionProperty $prop) use ($reflectionClass, $reader, $scope) {
+            foreach($props as $prop) {
+                $uploadableAnnotation = $reader->getPropertyAnnotation(
+                    $reflectionClass->getProperty($prop->getName()),
+                    UploadableKey::class
+                );
+
+                if ($uploadableAnnotation) {
+                    $annotations[] = [
+                        'class' => $reflectionClass->getName(),
+                        'scope' => $scope,
+                        'property' => $prop->getName(),
+                        'value' => $this->{$prop->getName()},
+                        'annotation' => $uploadableAnnotation
+                    ];
+                }
+            }
+        }
+
+        if (count($annotations) > 1) {
+            throw new \LogicException(sprintf('You must have only 1 \'%s\' annotation on class \'%s\'', UploadableKey::class, get_class($this)));
+        }
+
+        if (empty($annotations)) {
+            self::$uploadableKey = 'id';
+            self::$uploadableKeySplitLength = UploadableKey::DEFAULT_SPLIT_LENGTH;
+        } else {
+            self::$uploadableKey = $annotations[0]['property'];
+            self::$uploadableKeySplitLength = $annotations[0]['annotation']->getSplitLength();
+        }
+    }
+
+    private function readUploadableFieldAnnotations(): array
+    {
+        $reflectionClass = new \ReflectionClass(get_called_class());
+        $annotations = [];
+
+        foreach([\ReflectionProperty::IS_PUBLIC, \ReflectionProperty::IS_PRIVATE] as $scope) {
+            $props = $reflectionClass->getProperties($scope);
+            $reader = new AnnotationReader();
+
+            foreach($props as $prop) {
                 $uploadableAnnotation = $reader->getPropertyAnnotation(
                     $reflectionClass->getProperty($prop->getName()),
                     UploadableField::class
                 );
 
-                return $uploadableAnnotation ? [
-                    'class' => $reflectionClass->getName(),
-                    'scope' => $scope,
-                    'property' => $prop->getName(),
-                    'value' => $this->{$prop->getName()},
-                    'annotation' => $uploadableAnnotation
-                ] : false;
-            }, $props));
-        }, [\ReflectionProperty::IS_PUBLIC, \ReflectionProperty::IS_PRIVATE]);
+                if ($uploadableAnnotation) {
+                    $annotations[] = [
+                        'class' => $reflectionClass->getName(),
+                        'scope' => $scope,
+                        'property' => $prop->getName(),
+                        'value' => $this->{$prop->getName()},
+                        'annotation' => $uploadableAnnotation
+                    ];
+                }
+            }
+        }
 
-        return array_merge([], ...$annotations);
+        return $annotations;
     }
 
     public function getLoadUploadableAssets(): array
@@ -47,7 +116,7 @@ trait UploadableTrait
             return $this->uploadableFields;
         }
 
-        $this->uploadableFields = array_reduce($this->readUploadableAnnotations(), function ($carry, $uploadableField) {
+        $this->uploadableFields = array_reduce($this->readUploadableFieldAnnotations(), function ($carry, $uploadableField) {
             /** @var AbstractAsset $asset */
             $asset = $uploadableField['annotation']->getAsset();
 
@@ -92,13 +161,15 @@ trait UploadableTrait
         $entityName = strtolower($reflectionClass->getShortName());
         $identifier = strtolower(substr(md5($className),0,6));
         $directory = sprintf('%s-%s', $entityName, $identifier);
-        
+
         return $directory;
     }
 
     public function getUploadEntityToken(): ?string
     {
-        return implode('/', str_split($this->getEntityIdentifierValue()));
+        $uploadableKeyValue = $this->getUploadableKeyValue();
+
+        return implode('/', str_split($uploadableKeyValue, self::$uploadableKeySplitLength));
     }
 
 
