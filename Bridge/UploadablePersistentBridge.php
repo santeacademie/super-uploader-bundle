@@ -2,6 +2,7 @@
 
 namespace Santeacademie\SuperUploaderBundle\Bridge;
 
+use Santeacademie\SuperUploaderBundle\Interface\StaticExtensionVariantInterface;
 use Santeacademie\SuperUploaderBundle\Model\AbstractVariantEntityMap;
 use Santeacademie\SuperUploaderBundle\Model\VariantEntityMap;
 use Santeacademie\SuperUploaderBundle\Repository\VariantEntityMapRepository;
@@ -45,9 +46,11 @@ class UploadablePersistentBridge extends AbstractUploadableBridge
 
             //variantFileName = $this->getVariantFileName($variant, $variant->getTemporaryFile()->guessExtension(), StringUtil::generateRandomPassword());
             // Reuse old temporary name (important)
-            $variantFileName = $variant->getExtension()
-                ? $variant->getTemporaryFile()->getFilename()
-                : $variant->getTemporaryFile()->getFilename() . '.' . $variant->getTemporaryFile()->guessExtension();
+            $variantFileName = $variant->getTemporaryFile()->getFilename();
+
+            if (!$variant instanceof StaticExtensionVariantInterface) {
+                $variantFileName .= '.'.$variant->getTemporaryFile()->guessExtension();
+            }
 
             $variantFile = new File(sprintf('%s/%s', $entityAssetPath, $variantFileName), false);
 

@@ -3,7 +3,9 @@
 namespace Santeacademie\SuperUploaderBundle\Asset\Variant;
 
 
-class VideoVariant extends AbstractVariant
+use Santeacademie\SuperUploaderBundle\Interface\StaticExtensionVariantInterface;
+
+class VideoVariant extends AbstractVariant implements StaticExtensionVariantInterface
 {
 
     public function __construct(
