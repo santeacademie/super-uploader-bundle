@@ -42,7 +42,7 @@ trait UploadableTrait
 
     private function readUploadableKeyAnnotation(): void
     {
-        $reflectionClass = new \ReflectionClass(get_called_class());
+        $reflectionClass = new \ReflectionClass(PathUtil::sanitizeForProxy(get_called_class()));
         $annotations = [];
 
         foreach([\ReflectionProperty::IS_PUBLIC, \ReflectionProperty::IS_PRIVATE] as $scope) {
