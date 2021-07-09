@@ -1,6 +1,9 @@
 Changelog
 =
 
+> **2.1**
+- Fix add variantFileName extension in UploadablePersistentBridge
+
 > **2.0**
 - `[BreakingChanges]` New workflow for variants with new events
 - `[Codestyle]` Cleaner extension guesser for TemporaryVariant files
