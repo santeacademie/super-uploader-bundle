@@ -2,9 +2,7 @@
 
 namespace Santeacademie\SuperUploaderBundle\Asset\Variant;
 
-use Santeacademie\SuperUploaderBundle\Asset\Variant\Interface\StaticExtensionVariantInterface;
-
-class VideoVariant extends AbstractVariant implements StaticExtensionVariantInterface
+class VideoVariant extends AbstractVariant
 {
 
     public function __construct(
@@ -12,10 +10,10 @@ class VideoVariant extends AbstractVariant implements StaticExtensionVariantInte
         bool $required,
         string $name,
         string $label,
-        private string $extension
+        ?string $extension
     )
     {
-        parent::__construct($variantTypeClass, $required, $name, $label);
+        parent::__construct($variantTypeClass, $required, $name, $label, $extension);
     }
 
     public function getName(): string
@@ -28,8 +26,4 @@ class VideoVariant extends AbstractVariant implements StaticExtensionVariantInte
         return $this->label;
     }
 
-    public function getExtension(): string
-    {
-        return $this->extension;
-    }
 }

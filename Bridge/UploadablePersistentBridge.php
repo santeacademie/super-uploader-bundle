@@ -2,7 +2,6 @@
 
 namespace Santeacademie\SuperUploaderBundle\Bridge;
 
-use Santeacademie\SuperUploaderBundle\Asset\Variant\Interface\StaticExtensionVariantInterface;
 use Santeacademie\SuperUploaderBundle\Event\PersistentVariantCreatedEvent;
 use Santeacademie\SuperUploaderBundle\Event\PersistentVariantDeletedEvent;
 use Santeacademie\SuperUploaderBundle\Model\AbstractVariantEntityMap;
@@ -49,7 +48,7 @@ class UploadablePersistentBridge extends AbstractUploadableBridge
         // Reuse old temporary name (important)
         $variantFileName = $variant->getTemporaryFile()->getFilename();
 
-        if (!$variant instanceof StaticExtensionVariantInterface) {
+        if (!empty($variant->getExtension())) {
             $variantFileName .= '.'.$variant->getTemporaryFile()->guessExtension();
         }
 

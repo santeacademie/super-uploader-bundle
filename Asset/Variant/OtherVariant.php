@@ -10,9 +10,10 @@ class OtherVariant extends AbstractVariant
         bool $required,
         string $name,
         string $label,
+        ?string $extension
     )
     {
-        parent::__construct($variantTypeClass, $required, $name, $label);
+        parent::__construct($variantTypeClass, $required, $name, $label, $extension);
     }
 
     public function getName(): string
