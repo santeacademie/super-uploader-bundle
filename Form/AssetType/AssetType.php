@@ -37,6 +37,10 @@ class AssetType extends AbstractAssetType
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        if (empty($options['uploadable_entity'])) {
+            return;
+        }
+
         /** @var AbstractAsset $asset */
         $asset = $options['uploadable_entity']->getUploadableAssetByName($builder->getForm()->getName());
 
@@ -159,6 +163,10 @@ class AssetType extends AbstractAssetType
 
     public function buildView(FormView $view, FormInterface $form, array $options): void
     {
+        if (empty($options['uploadable_entity'])) {
+            return;
+        }
+
         /** @var AbstractAsset $asset */
         $asset = $options['uploadable_entity']->getUploadableAssetByName($form->getName());
 
@@ -183,9 +191,10 @@ class AssetType extends AbstractAssetType
         );
 
         $resolver
-            ->setAllowedTypes('uploadable_entity', [UploadableInterface::class])
+            ->setAllowedTypes('uploadable_entity', ['null', UploadableInterface::class])
             ->setRequired('uploadable_entity')
             ->setAllowedTypes('genuine_upload_button', ['bool'])
             ->setAllowedTypes('variant_upload_button', ['bool']);
     }
 }
+
