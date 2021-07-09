@@ -2,22 +2,20 @@
 
 namespace Santeacademie\SuperUploaderBundle\Asset\Variant;
 
-use Santeacademie\SuperUploaderBundle\Form\AbstractVariantType;
-use Santeacademie\SuperUploaderBundle\Asset\Variant\Interface\StaticExtensionVariantInterface;
 
-class PictureVariant extends AbstractVariant implements StaticExtensionVariantInterface
+class PictureVariant extends AbstractVariant
 {
     public function __construct(
         string $variantTypeClass,
         bool $required,
         string $name,
         string $label,
+        ?string $extension,
         private int $width,
         private int $height,
-        private string $extension
     )
     {
-        parent::__construct($variantTypeClass, $required, $name, $label);
+        parent::__construct($variantTypeClass, $required, $name, $label, $extension);
     }
 
     public function getName(): string
@@ -39,12 +37,6 @@ class PictureVariant extends AbstractVariant implements StaticExtensionVariantIn
     {
         return $this->width;
     }
-
-    public function getExtension(): string
-    {
-        return $this->extension;
-    }
-
 
 
 }

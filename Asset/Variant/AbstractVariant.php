@@ -21,7 +21,8 @@ abstract class AbstractVariant
         protected string $variantTypeClass,
         protected bool $required,
         protected string $name,
-        protected string $label
+        protected string $label,
+        protected ?string $extension
     )
     {
         if (!class_exists($variantTypeClass)) {
@@ -100,6 +101,19 @@ abstract class AbstractVariant
 
         return $this;
     }
+
+    public function getExtension(): ?string
+    {
+        return $this->extension;
+    }
+
+    public function setExtension(?string $extension): self
+    {
+        $this->extension = $extension;
+
+        return $this;
+    }
+
 
 
 }
