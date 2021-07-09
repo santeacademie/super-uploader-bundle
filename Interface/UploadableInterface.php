@@ -19,5 +19,5 @@ interface UploadableInterface
 
     public function getUploadableKeyName(): string;
 
-    public function getUploadableKeyValue(): string;
+    public function getUploadableKeyValue(): ?string;
 }

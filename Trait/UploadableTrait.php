@@ -27,7 +27,7 @@ trait UploadableTrait
         return self::$uploadableKey;
     }
 
-    public function getUploadableKeyValue(): string
+    public function getUploadableKeyValue(): ?string
     {
         $keyName = $this->getUploadableKeyName();
 
