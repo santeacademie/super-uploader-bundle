@@ -22,12 +22,14 @@ abstract class AbstractVariant
         protected bool $required,
         protected string $name,
         protected string $label,
-        protected ?string $extension
+        protected string $extension = ''
     )
     {
         if (!class_exists($variantTypeClass)) {
             throw new InvalidOptionsException(sprintf('VariantType class "%s" doesn\'t exist.', $variantTypeClass));
         }
+
+        $this->extension = empty($this->extension) ? '' : $this->extension;
     }
 
     public function getVariantTypeClass(): string
@@ -107,7 +109,7 @@ abstract class AbstractVariant
         return $this->extension;
     }
 
-    public function setExtension(?string $extension): self
+    public function setExtension(string $extension): self
     {
         $this->extension = $extension;
 
