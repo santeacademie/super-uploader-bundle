@@ -10,7 +10,7 @@ class DocumentVariant extends AbstractVariant
         bool $required,
         string $name,
         string $label,
-        ?string $extension
+        ?string $extension = ''
     )
     {
         parent::__construct($variantTypeClass, $required, $name, $label, $extension);
