@@ -48,7 +48,7 @@ class UploadablePersistentBridge extends AbstractUploadableBridge
         // Reuse old temporary name (important)
         $variantFileName = $variant->getTemporaryFile()->getFilename();
 
-        if (!empty($variant->getExtension())) {
+        if (empty($variant->getExtension())) {
             $variantFileName .= '.'.$variant->getTemporaryFile()->guessExtension();
         }
 
