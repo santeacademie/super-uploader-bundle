@@ -10,9 +10,9 @@ class PictureVariant extends AbstractVariant
         bool $required,
         string $name,
         string $label,
-        ?string $extension,
         private int $width,
         private int $height,
+        ?string $extension = ''
     )
     {
         parent::__construct($variantTypeClass, $required, $name, $label, $extension);
