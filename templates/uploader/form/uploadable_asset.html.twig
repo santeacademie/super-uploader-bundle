@@ -20,10 +20,10 @@
 
 			<div class="uploadable-asset-variant-static-injector"
 			 	{% if form[variant.name].vars.js %}
-			 		data-js="{{ asset('/js/uploader/form/variant/'~form_variant_type_name~'.js') }}"
+			 		data-js="{{ asset('bundles/superuploader/js/uploader/form/variant/'~form_variant_type_name~'.js') }}"
 			 	{% endif %}
 				{% if form[variant.name].vars.css %}
-					data-css="{{  asset('css/uploader/form/variant/'~form_variant_type_name~'.css') }}"
+					data-css="{{  asset('bundles/superuploader/css/uploader/form/variant/'~form_variant_type_name~'.css') }}"
 			 	{% endif %}
 				data-asset="{{ asset.name }}"
 				data-variant="{{ variant.name }}"
@@ -35,10 +35,4 @@
 	</div>
 
 	{{ form_rest(form)}}
-{% endblock %}
-
-{% block mdr %}
-	<div style="font-size:200px;">
-		MDR
-	</div>
 {% endblock %}
