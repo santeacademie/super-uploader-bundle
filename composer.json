@@ -1,5 +1,6 @@
 {
 	"name": "santeacademie/super-uploader-bundle",
+	"license": "MIT",
 	"type": "symfony-bundle",
 	"description": "SuperUploader bundle",
 	"keywords": [
