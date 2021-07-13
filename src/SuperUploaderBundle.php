@@ -38,4 +38,10 @@ class SuperUploaderBundle extends Bundle
         $container->addCompilerPass(new RegisterDoctrineOrmMappingPass());
         $container->addCompilerPass(new TwigFormThemesPass());
     }
+
+    public function getPath(): string
+    {
+        return \dirname(__DIR__);
+    }
+
 }
