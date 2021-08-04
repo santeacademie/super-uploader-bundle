@@ -1,6 +1,10 @@
 Changelog
 =
 
+> **2.2**
+- Changelog
+- License
+
 > **2.1**
 - Fix add variantFileName extension in UploadablePersistentBridge
 
