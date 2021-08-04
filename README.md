@@ -45,7 +45,7 @@ php bin/console assets:install
 
 ## 2. Usage
 
-- Entity example
+- Entity example (`public` is important on asset attribute !)
 
 ```php
 <?php
