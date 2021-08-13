@@ -1,6 +1,10 @@
 Changelog
 =
 
+> **2.2.1**
+- Rename upload type
+- Change versioning
+
 > **2.2**
 - Changelog
 - License
