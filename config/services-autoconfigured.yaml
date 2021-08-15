@@ -1,0 +1,8 @@
+services:
+    _defaults:
+        autowire: false
+        autoconfigure: true
+
+
+    Santeacademie\SuperUploaderBundle\Select\:
+        resource: '../src/Select/'
