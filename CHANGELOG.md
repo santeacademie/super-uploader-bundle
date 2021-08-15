@@ -1,6 +1,9 @@
 Changelog
 =
 
+> **2.2.2**
+- Customize inner labels
+
 > **2.2.1**
 - Rename upload type
 - Change versioning
