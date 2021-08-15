@@ -24,7 +24,7 @@ use Santeacademie\SuperUploaderBundle\Twig\UploaderTwigExtension;
 use Santeacademie\SuperUploaderBundle\Subscriber\UploadableSubscriber;
 use Santeacademie\SuperUploaderBundle\EventListener\UploadableEntityListener;
 use Santeacademie\SuperUploaderBundle\Interface\VariantTansformerInterface;
-
+use Santeacademie\SuperUploaderBundle\Select\SelectUploadMediaType;
 
 return static function (ContainerConfigurator $container): void {
     $services = $container->services();
@@ -33,9 +33,9 @@ return static function (ContainerConfigurator $container): void {
             
         ->instanceof(VariantTansformerInterface::class)
             ->tag('super_uploader.transformer')
-    
-
-
+        
+        ->instanceof(SelectUploadMediaType::class)
+            ->tag('super_uploader.select.upload_media_type')
             
         ->set('super_uploader.bridge.temporary', UploadableTemporaryBridge::class)
         ->args([
