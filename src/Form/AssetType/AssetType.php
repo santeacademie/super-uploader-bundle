@@ -52,20 +52,32 @@ class AssetType extends AbstractAssetType
             /** @var AbstractVariant $variant */
             $name = $variant->getName();
 
-            $builder->add($name, $variant->getVariantTypeClass(), [
+            $variantOptions = [
                 'asset' => $asset,
                 'variant' => $variant,
                 'variant_upload_button' => $options['variant_upload_button'],
                 'mapped' => false
-            ]);
+            ];
+
+            if (!is_null($options['label_variant'])) {
+                $variantOptions['label'] = $options['label_variant'];
+            }
+
+            $builder->add($name, $variant->getVariantTypeClass(), $variantOptions);
+
+            $variantFileOptions = [
+                'mapped' => false
+            ];
+
+            if (!is_null($options['label_variant_file'])) {
+                $variantFileOptions['label'] = $options['label_variant_file'];
+            }
 
             $builder->get($name)
                 ->add('temporaryFile', HiddenType::class, [
                     'mapped' => false
                 ])
-                ->add('variantFile', FileType::class, [
-                    'mapped' => false
-                ]);
+                ->add('variantFile', FileType::class, $variantFileOptions);
 
             /** @var AbstractVariantType $variantTypeInstance */
             $variantTypeInstance = $builder->getForm()->get($name)->getConfig()->getType()->getInnerType();
@@ -185,6 +197,8 @@ class AssetType extends AbstractAssetType
                 'uploadable_entity' => null,
                 'genuine_upload_button' => true,
                 'variant_upload_button' => true,
+                'label_variant' => null,
+                'label_variant_file' => null,
                 'required' => false,
                 'mapped' => false
             ]
@@ -193,6 +207,8 @@ class AssetType extends AbstractAssetType
         $resolver
             ->setAllowedTypes('uploadable_entity', ['null', UploadableInterface::class])
             ->setRequired('uploadable_entity')
+            ->setAllowedTypes('label_variant', ['bool', 'string', 'null'])
+            ->setAllowedTypes('label_variant_file', ['bool', 'string', 'null'])
             ->setAllowedTypes('genuine_upload_button', ['bool'])
             ->setAllowedTypes('variant_upload_button', ['bool']);
     }
