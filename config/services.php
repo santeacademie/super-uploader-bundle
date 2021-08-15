@@ -34,9 +34,9 @@ return static function (ContainerConfigurator $container): void {
         ->instanceof(VariantTansformerInterface::class)
             ->tag('super_uploader.transformer')
         
-        ->instanceof(SelectUploadMediaType::class)
-            ->tag('super_uploader.select.upload_media_type')
-            
+        ->set('super_uploader.select.upload_media_type', SelectUploadMediaType::class)
+        ->alias(SelectUploadMediaType::class, 'super_uploader.select.upload_media_type')
+
         ->set('super_uploader.bridge.temporary', UploadableTemporaryBridge::class)
         ->args([
             '%kernel.project_dir%/public',
