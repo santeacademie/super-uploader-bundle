@@ -46,6 +46,9 @@ class SuperUploaderExtension extends Extension implements CompilerPassInterface
          $container->registerForAutoconfiguration(VariantTansformerInterface::class)
             ->addTag('super_uploader.transformer')
         ;
+
+        $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../../config'));
+        $loader->load('services-autoconfigured.yaml');
     }
 
     public function process(ContainerBuilder $container)
