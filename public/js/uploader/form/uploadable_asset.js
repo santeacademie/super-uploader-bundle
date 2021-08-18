@@ -2,6 +2,10 @@ window._uploadables = window._uploadables || {'_internal': {'js':{}, 'css':{}, '
 
 jQuery(function($) {
     jQuery.loadAssetStatic = function (url, callback, type) {
+        var isset = function (obj){
+            return obj !== undefined && obj !== null;
+        };
+
         if (!isset(window._uploadables['_internal'][type][url])) {
             window._uploadables['_internal'][type][url] = 'init';
         }

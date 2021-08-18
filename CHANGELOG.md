@@ -1,6 +1,9 @@
 Changelog
 =
 
+> **2.3.1**
+- Fixed js
+
 > **2.2.2**
 - Customize inner labels
 
