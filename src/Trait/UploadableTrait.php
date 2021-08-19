@@ -45,7 +45,7 @@ trait UploadableTrait
         $reflectionClass = new \ReflectionClass(PathUtil::sanitizeForProxy(get_called_class()));
         $annotations = [];
 
-        foreach([\ReflectionProperty::IS_PUBLIC, \ReflectionProperty::IS_PRIVATE] as $scope) {
+        foreach([\ReflectionProperty::IS_PUBLIC, \ReflectionProperty::IS_PRIVATE, \ReflectionProperty::IS_PROTECTED] as $scope) {
             $props = $reflectionClass->getProperties($scope);
             $reader = new AnnotationReader();
 
@@ -85,7 +85,7 @@ trait UploadableTrait
         $reflectionClass = new \ReflectionClass(get_called_class());
         $annotations = [];
 
-        foreach([\ReflectionProperty::IS_PUBLIC, \ReflectionProperty::IS_PRIVATE] as $scope) {
+        foreach([\ReflectionProperty::IS_PUBLIC, \ReflectionProperty::IS_PRIVATE, \ReflectionProperty::IS_PROTECTED] as $scope) {
             $props = $reflectionClass->getProperties($scope);
             $reader = new AnnotationReader();
 
