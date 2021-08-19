@@ -1,6 +1,9 @@
 Changelog
 =
 
+> **2.3.2**
+- Fixed ignored protected uploadableKey
+
 > **2.3.1**
 - Fixed js
 
