@@ -1,6 +1,9 @@
 Changelog
 =
 
+> **2.3.3**
+- Add ext-imagick and ext-gd as php requirements
+
 > **2.3.2**
 - Fixed ignored protected uploadableKey
 
