@@ -17,11 +17,12 @@ class PdfTransformer implements VariantTansformerInterface
     public function transformFile(File $file, PdfVariant|AbstractVariant $variant, array $variantTypeData): File
     {
         if (
-            $file->guessExtension() !== 'pdf'
+            $file->guessExtension() !== PdfVariant::EXTENSION
             || (!is_null($variant->getSizeLimit()) && $file->getSize() > $variant->getSizeLimit())
         ) {
             $imagick = new Imagick($file->getRealPath());
 
+            $imagick->setImageFormat(PdfVariant::EXTENSION);
             $imagick->writeImage($file->getPathname());
         }
 

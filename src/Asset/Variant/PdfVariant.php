@@ -4,6 +4,8 @@ namespace Santeacademie\SuperUploaderBundle\Asset\Variant;
 
 class PdfVariant extends AbstractVariant
 {
+    public const EXTENSION = 'pdf';
+
     public function __construct(
         string $variantTypeClass,
         bool $required,
