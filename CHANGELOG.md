@@ -1,6 +1,9 @@
 Changelog
 =
 
+> **2.3.4**
+- Add pdf transformer
+
 > **2.3.3**
 - Add ext-imagick and ext-gd as php requirements
 
