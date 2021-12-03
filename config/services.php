@@ -1,5 +1,7 @@
 <?php
 
+use Santeacademie\SuperUploaderBundle\Form\VariantType\PdfVariantType;
+use Santeacademie\SuperUploaderBundle\Transformer\PdfTransformer;
 use function Symfony\Component\DependencyInjection\Loader\Configurator\service;
 use function Symfony\Component\DependencyInjection\Loader\Configurator\tagged_iterator;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
@@ -119,6 +121,8 @@ return static function (ContainerConfigurator $container): void {
         ->set('super_uploader.transformer.identity', FileTransformer::class)
             ->alias(FileTransformer::class, 'super_uploader.transformer.identity')
 
+        ->set('super_uploader.transformer.pdf', PdfTransformer::class)
+            ->alias(PdfTransformer::class, 'super_uploader.transformer.pdf')
             
         ->set('super_uploader.form.variant_type.imagick_crop', ImagickCropVariantType::class)
             ->args([
@@ -126,7 +130,13 @@ return static function (ContainerConfigurator $container): void {
             ])
             ->tag('form.type')
         ->alias(ImagickCropVariantType::class, 'super_uploader.form.variant_type.imagick_crop')
-            
+
+        ->set('super_uploader.form.variant_type.pdf', PdfVariantType::class)
+            ->args([
+                service(PdfTransformer::class),
+            ])
+            ->tag('form.type')
+        ->alias(PdfVariantType::class, 'super_uploader.form.variant_type.pdf')
             
             
             
