@@ -162,14 +162,15 @@ class UploadableEntityBridge extends AbstractUploadableBridge
         UploadableInterface $entity,
         AbstractVariant $variant,
         File|string $fileOrBinary,
-        bool $flush = true
+        bool $flush = true,
+        ?callable $transformerCallback = null
     ): void
     {
         if (is_string($fileOrBinary)) {
             $fileOrBinary = FileUtil::fileFromContent($fileOrBinary);
         }
 
-        $temporaryVariantFile = $this->uploadableTemporaryBridge->genuineToTemporaryVariantFile($fileOrBinary, $variant, $entity);
+        $temporaryVariantFile = $this->uploadableTemporaryBridge->genuineToTemporaryVariantFile($fileOrBinary, $variant, $entity, $transformerCallback);
 
         $oldValue = $this->getEntityAssetVariantFile(
             entity: $entity,
