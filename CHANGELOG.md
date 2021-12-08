@@ -1,6 +1,9 @@
 Changelog
 =
 
+> **2.3.5**
+- Update manual upload 
+
 > **2.3.4**
 - Add pdf transformer
 
