@@ -131,6 +131,10 @@ trait UploadableTrait
 
             $carry[$asset->getName()] = $asset;
 
+            if (empty($this->{$asset->getPropertyName()})) {
+                $this->{$asset->getPropertyName()} = $asset;
+            }
+
             return $carry;
         }, []);
 
