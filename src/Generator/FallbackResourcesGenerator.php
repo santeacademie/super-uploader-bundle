@@ -67,6 +67,8 @@ class FallbackResourcesGenerator
                 $object = new $name();
             } catch(\ArgumentCountError $e) {
                 continue;
+            } catch(\Error $e) {
+                continue;
             }
 
             if (!$object instanceof UploadableInterface) {
