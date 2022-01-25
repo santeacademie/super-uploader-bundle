@@ -22,8 +22,12 @@ class PdfTransformer implements VariantTansformerInterface
             || (!is_null($variant->getSizeLimit()) && $file->getSize() > $variant->getSizeLimit())
         ) {
             $gs = new Ghostscript();
-            $gs->setDevice(new Pdf());
 
+            if (!$variant->getGhostscriptPath() === null) {
+                $gs::setGsPath($variant->getGhostscriptPath());
+            }
+
+            $gs->setDevice(new Pdf());
             $gs->setInputFile($file->getRealPath());
 
             $compressedFile = sprintf('%s_compressed.%s',
