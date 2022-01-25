@@ -40,7 +40,22 @@ jQuery(function($) {
         jQuery.loadAssetStatic(url, callback, 'js');
     };
 
+    window._uploadables.init();
+
+    $(document).on('change', '.upload-variant input[type="file"]', function(e) {
+        var fileName = e.target.files[0].name;
+        $(this).siblings('.custom-file-label').attr('title', fileName).html(fileName);
+    });
+});
+
+window._uploadables.init = function() {
     $('.uploadable-asset-variant-static-injector').each(function() {
+        if ($(this).hasClass('uploadable-injected')) {
+            return;
+        }
+        
+        $(this).addClass('uploadable-injected');
+
         var uploadable = $(this).data();
 
         uploadable['key'] = [uploadable.asset, uploadable.variant].join('_');
@@ -56,12 +71,7 @@ jQuery(function($) {
             $("body").append("<script>" + jsData + "</script>");
         });
     });
-
-    $('input[type="file"]').change(function(e){
-        var fileName = e.target.files[0].name;
-        $(this).siblings('.custom-file-label').attr('title', fileName).html(fileName);
-    });
-});
+}
 
 window[window._uploadables['_internal'].bridgeFuncName] = function(uavKey) {
     return window._uploadables[uavKey];

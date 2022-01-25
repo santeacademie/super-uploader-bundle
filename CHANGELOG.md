@@ -1,6 +1,12 @@
 Changelog
 =
 
+> **2.3.7**
+- Fix fallback generator
+
+> **2.3.6**
+- Fix null asset when initialized object 
+
 > **2.3.5**
 - Update manual upload 
 
