@@ -23,7 +23,7 @@ class PdfTransformer implements VariantTansformerInterface
         ) {
             $gs = new Ghostscript();
 
-            if (!$variant->getGhostscriptPath() === null) {
+            if ($variant->getGhostscriptPath() !== null) {
                 $gs::setGsPath($variant->getGhostscriptPath());
             }
 
