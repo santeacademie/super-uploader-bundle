@@ -34,7 +34,7 @@
 		"santeacademie/super-select": "^1.0",
 		"symfony/twig-bundle": "^5.0",
 		"twig/twig": "^2.12|^3.0",
-		"org_heigl/ghostscript": "dev-master"
+		"org_heigl/ghostscript": "2.3.0"
 	},
 	"require-dev": {
 		"mockery/mockery": "^1.2",
