@@ -43,6 +43,11 @@ php bin/console assets:install
 <script src="https://code.jquery.com/jquery-3.5.1.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
 ```
 
+- Install Ghostscript
+```bash
+sudo apt-get install ghostscript
+```
+
 ## 2. Usage
 
 - Entity example (`public` is important on asset attribute !)
@@ -248,4 +253,3 @@ class FooController extends AbstractController
 ```html
 <img src="{{ asset(user.profilePicture.variant('landscape').variantFile) }}" />
 ```
-
