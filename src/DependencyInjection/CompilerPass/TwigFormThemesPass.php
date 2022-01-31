@@ -19,7 +19,8 @@ class TwigFormThemesPass implements CompilerPassInterface
         '@SuperUploader/uploader/form/variant/document_variant_type.html.twig',
         '@SuperUploader/uploader/form/variant/video_variant_type.html.twig',
         '@SuperUploader/uploader/form/variant/imagick_crop_variant_type.html.twig',
-        '@SuperUploader/uploader/form/variant/imagick_ugly_variant_type.html.twig'
+        '@SuperUploader/uploader/form/variant/imagick_ugly_variant_type.html.twig',
+        '@SuperUploader/uploader/form/variant/picture_variant_type.html.twig'
     ];
 
     public function process(ContainerBuilder $container)
