@@ -35,7 +35,7 @@ class PdfVariant extends AbstractVariant
         return $this->sizeLimit;
     }
 
-    public function getGhostscriptPath(): string
+    public function getGhostscriptPath(): ?string
     {
         return $this->ghostscriptPath;
     }
