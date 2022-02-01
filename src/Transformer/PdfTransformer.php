@@ -30,20 +30,22 @@ class PdfTransformer implements VariantTansformerInterface
             $gs->setDevice(new Pdf());
             $gs->setInputFile($file->getRealPath());
 
-            $compressedFile = sprintf('%s_compressed.%s',
-                $file->getBasename('.'.$file->getExtension()),
-                $file->getExtension()
+            $compressedFileBaseName = sprintf(
+                '%s_compressed',
+                $file->getBasename('.'.$file->getExtension())
             );
 
-            $gs->setOutputFile($compressedFile);
+            $gs->setOutputFile($compressedFileBaseName);
+
+            $compressedFilename = $compressedFileBaseName.'.'.$file->getExtension();
 
             if ($gs->render()) {
-                file_put_contents($file->getRealPath(), file_get_contents($file->getPath().'/'.$compressedFile));
+                file_put_contents($file->getRealPath(), file_get_contents($file->getPath().'/'.$compressedFilename));
             } else {
                 throw new Exception(
                     sprintf(
                         'Ghostscript error: render process has failed to write compressed file: "%s"',
-                        $compressedFile
+                        $compressedFilename
                     )
                 );
             }
