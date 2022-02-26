@@ -3,6 +3,7 @@
 namespace Santeacademie\SuperUploaderBundle\Transformer;
 
 use Exception;
+use Imagick;
 use Org_Heigl\Ghostscript\Ghostscript;
 use Santeacademie\SuperUploaderBundle\Asset\Variant\AbstractVariant;
 use Santeacademie\SuperUploaderBundle\Asset\Variant\PdfVariant;
@@ -17,10 +18,15 @@ class PdfTransformer implements VariantTansformerInterface
      */
     public function transformFile(File $file, PdfVariant|AbstractVariant $variant, array $variantTypeData): File
     {
-        if (
-            $file->guessExtension() !== PdfVariant::EXTENSION
-            || (!is_null($variant->getSizeLimit()) && $file->getSize() > $variant->getSizeLimit())
-        ) {
+        if ($file->guessExtension() !== PdfVariant::EXTENSION) {
+            $imagick = new Imagick();
+            $imagick->readImage($file->getRealPath());
+            $imagick->setFilename($file->getBasename());
+
+            $imagick->writeImage();
+        }
+
+        if ((!is_null($variant->getSizeLimit()) && $file->getSize() > $variant->getSizeLimit())) {
             $gs = new Ghostscript();
 
             if ($variant->getGhostscriptPath() !== null) {
