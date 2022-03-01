@@ -9,6 +9,7 @@ use Santeacademie\SuperUploaderBundle\Asset\Variant\AbstractVariant;
 use Santeacademie\SuperUploaderBundle\Asset\Variant\PdfVariant;
 use Santeacademie\SuperUploaderBundle\Ghostscript\Device\Pdf;
 use Santeacademie\SuperUploaderBundle\Interface\VariantTansformerInterface;
+use Santeacademie\SuperUploaderBundle\Wrapper\TemporaryFile;
 use Symfony\Component\HttpFoundation\File\File;
 
 class PdfTransformer implements VariantTansformerInterface
@@ -25,7 +26,7 @@ class PdfTransformer implements VariantTansformerInterface
 
             $imagick->writeImage();
 
-            $file = new File($file->getBasename());
+            $file = new TemporaryFile($file->getPath().'/'.$imagick->getFilename());
         }
 
         if ((!is_null($variant->getSizeLimit()) && $file->getSize() > $variant->getSizeLimit())) {
