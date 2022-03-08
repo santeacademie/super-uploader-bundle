@@ -48,6 +48,18 @@ php bin/console assets:install
 sudo apt-get install ghostscript
 ```
 
+- Si la version de Ghostscript est entre la 9.24.0 et la 9.55.0, il faut commenter les lignes suivantes dans:
+```bash
+/etc/ImageMagick-6/policy.xml
+
+<policy domain="coder" rights="none" pattern="PS" />
+<policy domain="coder" rights="none" pattern="PS2" />
+<policy domain="coder" rights="none" pattern="PS3" />
+<policy domain="coder" rights="none" pattern="EPS" />
+<policy domain="coder" rights="none" pattern="PDF" />
+<policy domain="coder" rights="none" pattern="XPS" />
+```
+
 ## 2. Usage
 
 - Entity example (`public` is important on asset attribute !)
