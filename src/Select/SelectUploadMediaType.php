@@ -19,12 +19,12 @@ class SelectUploadMediaType extends AbstractSelect
     public static $VIDEO = 'video';
 
     /**
-     * @SelectOption(description="Document")
+     * @SelectOption(description="PDF")
      */
     public static $DOCUMENT = 'document';
 
     /**
-     * @SelectOption(description="Fichier")
+     * @SelectOption(description="Autre")
      */
     public static $GENERIC_FILE = 'generic_file';
 
