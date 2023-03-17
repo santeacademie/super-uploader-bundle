@@ -180,7 +180,7 @@ class UserType extends AbstractType
             ->add('firstname', TextType::class)
             ->add('lastname', TextType::class)
             ->add('email', EmailType::class)
-            ->add('trainer_photo', AssetType::class, [
+            ->add('profile_picture', AssetType::class, [
                 'uploadable_entity' => $builder->getData()
             ]);
     }
@@ -248,8 +248,8 @@ class FooController extends AbstractController
         $variantUser = $user->profilePicture->getVariant(ProfilePictureAsset::VARIANT_LANDSCAPE);
         
         $uploadableEntityBridge->manualUpload(
-            entity: $registration, 
-            variant: $variantRegistration, 
+            entity: $user, 
+            variant: $variantUser,
             fileOrBinary: $request->files->get('profile_picture')
         );
 
