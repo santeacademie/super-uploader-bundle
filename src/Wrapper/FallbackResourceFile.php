@@ -4,6 +4,6 @@ namespace Santeacademie\SuperUploaderBundle\Wrapper;
 
 use Symfony\Component\HttpFoundation\File\File;
 
-class FallbackResourceFile extends File {
+class FallbackResourceFile extends SuperFile {
 
 }

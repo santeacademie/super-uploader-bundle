@@ -26,7 +26,7 @@ class Configuration implements ConfigurationInterface
 
         $rootNode
             ->children()
-            ->append($this->createMountpointsNode())
+            ->append($this->createFlystemNode())
             ->append($this->createPersistenceNode())
             ->append($this->createVariantEntityMapNode())
             ->end()
@@ -35,9 +35,9 @@ class Configuration implements ConfigurationInterface
         return $treeBuilder;
     }
 
-    private function createMountpointsNode(): ArrayNodeDefinition
+    private function createFlystemNode() : ArrayNodeDefinition
     {
-        $treeBuilder = new TreeBuilder('mountpoints');
+        $treeBuilder = new TreeBuilder('flysystem');
         $node = $treeBuilder->getRootNode();
 
         $node
@@ -46,20 +46,16 @@ class Configuration implements ConfigurationInterface
                 ->children()
                     ->scalarNode('uploads')
                         ->cannotBeEmpty()
-                        ->defaultValue('uploads')
-                    ->end()
-                    ->scalarNode('resources')
-                        ->cannotBeEmpty()
-                        ->defaultValue('resources')
                     ->end()
                     ->scalarNode('temp')
                         ->cannotBeEmpty()
-                        ->defaultValue('uploads/tmp')
+                    ->end()
+                    ->scalarNode('resources')
+                        ->cannotBeEmpty()
                     ->end()
                 ->end()
             ->end()
-        ;
-
+            ;
         return $node;
     }
 

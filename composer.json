@@ -16,8 +16,8 @@
 		"php": ">=8.0",
 		"ext-imagick": "*",
 		"ext-gd": "*",
-		"doctrine/annotations": "^1.0",
-		"symfony/framework-bundle": "^5.0",
+		"doctrine/annotations": "^1.0|^2.0",
+		"symfony/framework-bundle": "*",
 		"symfony/routing": "^5.0",
 		"symfony/security-bundle": "^5.0",
 		"doctrine/orm": "^2.7",
@@ -34,14 +34,22 @@
 		"santeacademie/super-select": "^1.0",
 		"symfony/twig-bundle": "^5.0",
 		"twig/twig": "^2.12|^3.0",
-		"org_heigl/ghostscript": "2.3.0"
+		"org_heigl/ghostscript": "2.3.0",
+		"league/flysystem-bundle": "3.x-dev"
 	},
 	"require-dev": {
 		"mockery/mockery": "^1.2",
-		"symfony/phpunit-bridge": "^4.3 || ^5.0"
+		"symfony/phpunit-bridge": "6.3.x-dev",
+		"symfony/yaml": "6.3.x-dev"
 	},
 	"autoload": {
 		"psr-4": {"Santeacademie\\SuperUploaderBundle\\": "src/"}
+	},
+	"autoload-dev": {
+		"psr-4": {
+			"Santeacademie\\SuperUploaderBundle\\Tests\\App\\": "tests/app/src",
+			"Santeacademie\\SuperUploaderBundle\\Tests\\": "tests/"
+		}
 	},
 	"repositories": [
 		{

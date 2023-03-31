@@ -28,7 +28,7 @@ class SuperUploaderBundle extends Bundle
     /**
      * {@inheritdoc}
      */
-    public function getContainerExtension()
+    public function getContainerExtension(): SuperUploaderExtension|\Symfony\Component\DependencyInjection\Extension\ExtensionInterface|null
     {
         return new SuperUploaderExtension();
     }
