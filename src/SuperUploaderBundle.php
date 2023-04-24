@@ -10,6 +10,7 @@ use Santeacademie\SuperUploaderBundle\DependencyInjection\CompilerPass\TwigFormT
 use Santeacademie\SuperUploaderBundle\DependencyInjection\SuperUploaderExtension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
+use Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
 
 class SuperUploaderBundle extends Bundle
 {
@@ -28,7 +29,7 @@ class SuperUploaderBundle extends Bundle
     /**
      * {@inheritdoc}
      */
-    public function getContainerExtension()
+    public function getContainerExtension(): ?ExtensionInterface
     {
         return new SuperUploaderExtension();
     }
