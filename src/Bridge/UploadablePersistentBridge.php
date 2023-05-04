@@ -2,6 +2,10 @@
 
 namespace Santeacademie\SuperUploaderBundle\Bridge;
 
+use ErrorException;
+use League\Flysystem\FilesystemOperator;
+use League\Flysystem\StorageAttributes;
+use Santeacademie\SuperUploaderBundle\Asset\Variant\PictureVariant;
 use Santeacademie\SuperUploaderBundle\Event\PersistentVariantCreatedEvent;
 use Santeacademie\SuperUploaderBundle\Event\PersistentVariantDeletedEvent;
 use Santeacademie\SuperUploaderBundle\Model\AbstractVariantEntityMap;
@@ -25,8 +29,7 @@ class UploadablePersistentBridge extends AbstractUploadableBridge
 
     public function __construct(
         string $appPublicDir,
-        protected string $uploadableMountpoint,
-        protected Filesystem $filesystem,
+        protected FilesystemOperator $filesystem,
         protected UploadableTemporaryBridge $uploadableTemporaryBridge,
         protected ?VariantEntityMapRepository $variantEntityMapRepository,
         protected EventDispatcherInterface $eventDispatcher
@@ -52,13 +55,21 @@ class UploadablePersistentBridge extends AbstractUploadableBridge
             $variantFileName .= '.'.$variant->getTemporaryFile()->guessExtension();
         }
 
+        // Move temporary Variant file in Asset path
         $variantFile = new File(sprintf('%s/%s', $entityAssetPath, $variantFileName), false);
 
-        // Delete old Variant file in Asset path
-        $this->filesystem->remove(Finder::create()->in($entityAssetPath)->files()->name("/^$variantFileNamePrefix/"));
+        $filesToDelete = $this->filesystem->listContents($entityAssetPath)
+            ->filter(fn (StorageAttributes $attributes) => str_starts_with($attributes->path(), $entityAssetPath . '/' . $variantFileNamePrefix))
+            ->map(fn (StorageAttributes $attributes) => $attributes->path())
+            ->toArray();
 
-        // Move temporary Variant file in Asset path
-        $this->filesystem->copy($variant->getTemporaryFile(), $variantFile);
+        foreach ($filesToDelete as $file) {
+            $this->filesystem->delete($file);
+        }
+
+
+        $this->filesystem->write($variantFile->getPathname(), $variant->getTemporaryFile()->getContent());
+
 
         // Delete temporary artifacts (related to @ShowNoTransformation)
         //$this->filesystem->remove($variant->getTemporaryFile());
@@ -103,8 +114,8 @@ class UploadablePersistentBridge extends AbstractUploadableBridge
             ->setAssetClass(get_class($asset))
             ->setVariantClass(get_class($variant))
             ->setVariantTypeClass($variant->getVariantTypeClass())
-            ->setFileExtension($variantFile->guessExtension())
-            ->setFileSize((float) $variantFile->getSize())
+            ->setFileExtension($this->filesystem->mimeType($variantFile))
+            ->setFileSize((float) $this->filesystem->fileSize($variantFile))
         ;
 
         if (property_exists($variant, 'width')) {
@@ -131,7 +142,7 @@ class UploadablePersistentBridge extends AbstractUploadableBridge
                 $this->removeEntityVariantFile($variant, $uploadableEntity);
             }
         }
-        
+
         // Alternatively...
         /*
         if (!empty($this->variantEntityMapRepository)) {
@@ -193,18 +204,16 @@ class UploadablePersistentBridge extends AbstractUploadableBridge
 
     public function getUploadEntityAssetPath(UploadableInterface $entity, AbstractAsset $asset, $create = false): string
     {
-        // uploads/trainer-xxxx/{1/2/3}/picture/trainer_profile
-        $dir = sprintf('%s%s/%s/%s/%s/%s',
-            $this->getPublicDir(),
-            $this->uploadableMountpoint,
+        // entity-xxxx/{1/2/3}/picture/profile_picture
+        $dir = sprintf('%s/%s/%s/%s',
             $entity->getUploadEntityPath(),
             $entity->getUploadEntityToken(),
             $asset->getMediaType(),
             $asset->getName()
         );
 
-        if (!is_dir($dir) && $create) {
-            $this->filesystem->mkdir($dir);
+        if ($create) {
+            $this->filesystem->createDirectory($dir);
         }
 
         return $dir;

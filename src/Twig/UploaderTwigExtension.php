@@ -4,6 +4,8 @@ namespace Santeacademie\SuperUploaderBundle\Twig;
 
 use Santeacademie\SuperUploaderBundle\Asset\Variant\AbstractVariant;
 use Santeacademie\SuperUploaderBundle\Bridge\UploadableEntityBridge;
+use Santeacademie\SuperUploaderBundle\Exception\FileNotFoundException;
+use Santeacademie\SuperUploaderBundle\Exception\PlaceholderNotFound;
 use Santeacademie\SuperUploaderBundle\Interface\UploadableInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
@@ -11,25 +13,26 @@ use Twig\TwigFilter;
 class UploaderTwigExtension extends AbstractExtension
 {
 
-
     public function __construct(
-        private UploadableEntityBridge $uploadableEntityBridge
+        private UploadableEntityBridge $uploadableEntityBridge,
     )
     {
-
     }
 
-    public function getFilters()
+    public function getFilters(): array
     {
         return [
             new TwigFilter('uploadable', [$this, 'getUploadable']),
         ];
     }
 
-    public function getUploadable(UploadableInterface $entity, string $assetName, string $variantName, bool $fallbackResource = AbstractVariant::DEFAULT_FALLBACK_RESOURCE)
+    public function getUploadable(UploadableInterface $entity, string $assetName, string $variantName, bool $fallbackResource = AbstractVariant::DEFAULT_FALLBACK_RESOURCE): string
     {
-        $file = $this->uploadableEntityBridge->getNamedEntityAssetVariantFile($entity, $assetName, $variantName, $fallbackResource);
 
-        return !is_null($file) ? $file->getPathname() : '';
+        try {
+            return $this->uploadableEntityBridge->getPublicUrl($entity, $assetName, $variantName, $fallbackResource);
+        } catch (FileNotFoundException|PlaceholderNotFound $exception) {
+            return '';
+        }
     }
 }

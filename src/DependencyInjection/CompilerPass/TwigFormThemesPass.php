@@ -23,7 +23,7 @@ class TwigFormThemesPass implements CompilerPassInterface
         '@SuperUploader/uploader/form/variant/picture_variant_type.html.twig'
     ];
 
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container) : void
     {
         if (false === $container->hasDefinition('twig')) {
             return;

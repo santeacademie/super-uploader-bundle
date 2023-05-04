@@ -2,12 +2,14 @@
 
 namespace Santeacademie\SuperUploaderBundle\Generator;
 
+use League\Flysystem\FilesystemOperator;
 use Santeacademie\SuperUploaderBundle\Asset\AbstractAsset;
 use Santeacademie\SuperUploaderBundle\Asset\Variant\AbstractVariant;
 use Santeacademie\SuperUploaderBundle\Asset\Variant\PictureVariant;
 use Santeacademie\SuperUploaderBundle\Bridge\UploadableEntityBridge;
 use Santeacademie\SuperUploaderBundle\Interface\UploadableInterface;
 use Doctrine\ORM\EntityManagerInterface;
+use Santeacademie\SuperUploaderBundle\Wrapper\SuperFile;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpFoundation\File\File;
@@ -20,7 +22,7 @@ class FallbackResourcesGenerator
 
     public function __construct(
         protected string $appPublicDir,
-        protected Filesystem $filesystem,
+        protected FilesystemOperator $filesystem,
         protected EntityManagerInterface $entityManager,
         protected KernelInterface $kernel,
         protected UploadableEntityBridge $uploadableEntityBridge
@@ -33,7 +35,7 @@ class FallbackResourcesGenerator
     {
         $assetPath = $this->getFallbackRessourceAssetPath($entity, $variant->getAsset(), true);
         $variantResourceFileName = $this->uploadableEntityBridge->getVariantFileName($variant, 'png');
-        $resourceFile = new File(sprintf('%s/%s', $assetPath, $variantResourceFileName), false);
+        $resourceFile = new SuperFile(sprintf('%s/%s', $assetPath, $variantResourceFileName), false, $this->filesystem);
 
         $fontSize = $variant->getWidth() / 12;
         $angle = 0;
@@ -50,8 +52,15 @@ class FallbackResourcesGenerator
         $im = imagecreate($variant->getWidth(), $variant->getHeight());
         imagerectangle($im, 0, 0, $variant->getWidth(), $variant->getHeight(), imagecolorallocate($im, 170, 170, 170));
         imagettftext($im, $fontSize, $angle, $x, $y, imagecolorallocate($im, 50, 50, 50), $font, $text);
-        imagepng($im, $resourceFile->getPathname());
+
+        $stream = fopen('php://temp', 'w+b');
+        imagepng($im, $stream);
+        rewind($stream);
+
+        $this->filesystem->writeStream($resourceFile->getPathname(), $stream);
+        fclose($stream);
         imagedestroy($im);
+
 
         return $resourceFile;
     }
@@ -81,7 +90,7 @@ class FallbackResourcesGenerator
                 $assetPath = $this->getFallbackRessourceAssetPath($object, $asset, true);
 
                 if ($reset) {
-                    $this->filesystem->remove(Finder::create()->in($assetPath)->files());
+                    $this->filesystem->delete($assetPath);
                 }
 
                 $files[$name][$asset->getName()] = [];
@@ -97,12 +106,12 @@ class FallbackResourcesGenerator
         return $files;
     }
 
-    private function getFallbackRessourceAssetPath(UploadableInterface $entity, AbstractAsset $asset, bool $create = false)
+    private function getFallbackRessourceAssetPath(UploadableInterface $entity, AbstractAsset $asset, bool $create = false): string
     {
         $dir = $this->uploadableEntityBridge->getFallbackRessourceAssetPath($entity, $asset, false);
 
-        if (!is_dir($dir) && $create) {
-            $this->filesystem->mkdir($dir);
+        if (!$this->filesystem->directoryExists($dir) && $create) {
+            $this->filesystem->createDirectory($dir);
         }
 
         return $dir;

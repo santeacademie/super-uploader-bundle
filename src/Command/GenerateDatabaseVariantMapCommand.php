@@ -23,7 +23,7 @@ class GenerateDatabaseVariantMapCommand extends Command
 
 
 
-    protected static $defaultName = 'santeacademie:super-uploader:generate:dbmap';
+    protected static string $commandName = 'santeacademie:super-uploader:generate:dbmap';
 
     public function __construct(
         private string $appPublicDir,
@@ -33,7 +33,7 @@ class GenerateDatabaseVariantMapCommand extends Command
         private ?VariantEntityMapRepository $variantEntityMapRepository
     )
     {
-        parent::__construct();
+        parent::__construct(self::$commandName);
 
         $uploadablePersistentBridge->setAbsolutePublicDirEnabled(true);
         $uploadableEntityBridge->setAbsolutePublicDirEnabled(true);
