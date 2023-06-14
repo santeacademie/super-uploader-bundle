@@ -1,5 +1,6 @@
 <?php
 
+use League\Flysystem\FilesystemOperator;
 use Santeacademie\SuperUploaderBundle\Form\VariantType\PdfVariantType;
 use Santeacademie\SuperUploaderBundle\Transformer\PdfTransformer;
 use function Symfony\Component\DependencyInjection\Loader\Configurator\service;
@@ -39,8 +40,8 @@ return static function (ContainerConfigurator $container): void {
         ->set('super_uploader.bridge.temporary', UploadableTemporaryBridge::class)
         ->args([
             '%kernel.project_dir%/public',
-            '%super_uploader.mountpoint.temp%',
-            service(Filesystem::class),
+            service('super_uploader.flysystem.temp'),
+
             service(EventDispatcherInterface::class),
         ])
         ->alias(UploadableTemporaryBridge::class, 'super_uploader.bridge.temporary')
@@ -48,19 +49,18 @@ return static function (ContainerConfigurator $container): void {
         ->set('super_uploader.bridge.persistent', UploadablePersistentBridge::class)
         ->args([
             '%kernel.project_dir%/public',
-            '%super_uploader.mountpoint.uploads%',
-            service(Filesystem::class),
+            service('super_uploader.flysystem.uploads'),
             service(UploadableTemporaryBridge::class),
             null,
             service(EventDispatcherInterface::class)
         ])
         ->alias(UploadablePersistentBridge::class, 'super_uploader.bridge.persistent')
-            
+
         ->set('super_uploader.bridge.entity', UploadableEntityBridge::class)
         ->args([
             '%kernel.project_dir%/public',
-            '%super_uploader.mountpoint.resources%',
-            service(Filesystem::class),
+            service('super_uploader.flysystem.resources'),
+            service('super_uploader.flysystem.uploads'),
             service(UploadablePersistentBridge::class),
             service(UploadableTemporaryBridge::class),
             service(EventDispatcherInterface::class),
@@ -72,7 +72,7 @@ return static function (ContainerConfigurator $container): void {
         ->set('super_uploader.generator.fallback_resources', FallbackResourcesGenerator::class)
             ->args([
                 '%kernel.project_dir%/public',
-                service(Filesystem::class),
+                service('super_uploader.flysystem.resources'),
                 service(EntityManagerInterface::class),
                 service(KernelInterface::class),
                 service(UploadableEntityBridge::class),
@@ -116,7 +116,10 @@ return static function (ContainerConfigurator $container): void {
 
             
         ->set('super_uploader.transformer.imagick_crop', ImagickCropTransformer::class)
-            ->alias(ImagickCropTransformer::class, 'super_uploader.transformer.imagick_crop')
+        ->args([
+            service('super_uploader.flysystem.temp'),
+        ])
+        ->alias(ImagickCropTransformer::class, 'super_uploader.transformer.imagick_crop')
             
         ->set('super_uploader.transformer.identity', FileTransformer::class)
             ->alias(FileTransformer::class, 'super_uploader.transformer.identity')

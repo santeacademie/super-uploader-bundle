@@ -2,3 +2,8 @@ vendor/
 composer.lock
 .idea/
 auth.json
+/tests/app/var
+/tests/app/public/resources/
+/tests/app/public/tmp/
+/tests/app/public/uploads/
+.phpunit.result.cache

@@ -1,19 +1,19 @@
-<?php 
+<?php
 
 namespace Santeacademie\SuperUploaderBundle\Bridge;
 
+use League\Flysystem\FileAttributes;
+use League\Flysystem\FilesystemOperator;
+use Santeacademie\SuperUploaderBundle\Asset\Variant\AbstractVariant;
 use Santeacademie\SuperUploaderBundle\Event\TemporaryVariantCreatedEvent;
 use Santeacademie\SuperUploaderBundle\Event\TemporaryVariantPreCreateEvent;
-use Santeacademie\SuperUploaderBundle\Wrapper\TemporaryFile;
 use Santeacademie\SuperUploaderBundle\Interface\UploadableInterface;
-use Santeacademie\SuperUploaderBundle\Asset\Variant\AbstractVariant;
+use Santeacademie\SuperUploaderBundle\Wrapper\TemporaryFile;
 use Santeacademie\SuperUtil\PathUtil;
 use Santeacademie\SuperUtil\StringUtil;
-use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\Finder\Finder;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class UploadableTemporaryBridge extends AbstractUploadableBridge
 {
@@ -24,8 +24,7 @@ class UploadableTemporaryBridge extends AbstractUploadableBridge
 
     public function __construct(
         string $appPublicDir,
-        protected string $uploadableTemporaryMountpoint,
-        protected Filesystem $filesystem,
+        protected FilesystemOperator $filesystem,
         protected EventDispatcherInterface $eventDispatcher
     )
     {
@@ -44,9 +43,9 @@ class UploadableTemporaryBridge extends AbstractUploadableBridge
             $this->generateTemporaryFileName($uploadedFile->guessExtension())
         );
 
-        $temporaryFile = new TemporaryFile($temporaryFullName, false);
+        $temporaryFile = new TemporaryFile($temporaryFullName, false, $this->filesystem);
 
-        $this->filesystem->copy($uploadedFile, $temporaryFile);
+        $this->filesystem->write($temporaryFile->getPathname(), $uploadedFile->getContent());
 
         return $temporaryFile;
     }
@@ -65,7 +64,7 @@ class UploadableTemporaryBridge extends AbstractUploadableBridge
             $this->getVariantFileName($variant, $variant->getExtension(), StringUtil::generateRandomPassword())
         );
 
-        $temporaryVariantFile = new TemporaryFile($temporaryFullName, false);
+        $temporaryVariantFile = new TemporaryFile($temporaryFullName, false, $this->filesystem);
 
         // Attach temporary file to Variant
         $variant->setTemporaryFile($temporaryVariantFile);
@@ -74,7 +73,7 @@ class UploadableTemporaryBridge extends AbstractUploadableBridge
         $this->indexTemporaryEntityVariant($uploadableEntity, $variant);
 
         // Persist temporary Variant file based on genuine one
-        $this->filesystem->copy($genuineFile, $temporaryVariantFile);
+        $this->filesystem->write($temporaryVariantFile->getPathname(), $genuineFile->getContent());
 
         $temporaryFile = $variant->getTemporaryFile();
 
@@ -139,16 +138,21 @@ class UploadableTemporaryBridge extends AbstractUploadableBridge
 
     private function removeExpiredTemporaryFiles(): void
     {
-        $expiredTemporaryFiles = Finder::create()
-            ->in($this->getTemporaryPath(true))
-            ->files()
-            ->name('*-*.*')
-            ->filter(function(\SplFileInfo $file) {
-                return time() - $file->getCTime() > $this->temporaryMaxLifetime;
+        $expiredTemporaryFiles = $this->filesystem->listContents($this->getTemporaryPath(true), true)
+            ->filter(function ($file) {
+                /* @var FileAttributes $file */
+                return $file['type'] === 'file'
+                    && preg_match('/^[^\/]*-[^\/]*\..*$/', $file['path'])
+                    && time() - $file->lastModified() > $this->temporaryMaxLifetime;
             })
-        ;
+            ->map(function ($file) {
+                return $file['path'];
+            })
+        ->toArray();
 
-        $this->filesystem->remove($expiredTemporaryFiles);
+        foreach ($expiredTemporaryFiles as $file) {
+            $this->filesystem->delete($file);
+        }
     }
 
     private function generateTemporaryFileName(string $extension): string
@@ -162,14 +166,13 @@ class UploadableTemporaryBridge extends AbstractUploadableBridge
 
     private function getTemporaryPath($create = false, string $leaf = '')
     {
-        $dir = PathUtil::withoutTrailingSlash(sprintf('%s%s/%s',
+        $dir = PathUtil::withoutTrailingSlash(sprintf('%s/%s',
             $this->getPublicDir(),
-            $this->uploadableTemporaryMountpoint,
             $leaf
         ));
 
         if ($create) {
-            $this->filesystem->mkdir($dir);
+            $this->filesystem->createDirectory($dir);
         }
 
         return $dir;

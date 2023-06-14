@@ -2,17 +2,21 @@
 
 namespace Santeacademie\SuperUploaderBundle\Bridge;
 
+use League\Flysystem\FileAttributes;
+use League\Flysystem\FilesystemException;
+use League\Flysystem\FilesystemOperator;
+use League\Flysystem\StorageAttributes;
 use Santeacademie\SuperUploaderBundle\Asset\AbstractAsset;
+use Santeacademie\SuperUploaderBundle\Asset\Variant\AbstractVariant;
 use Santeacademie\SuperUploaderBundle\Event\PersistentVariantPreCreateEvent;
 use Santeacademie\SuperUploaderBundle\Event\VariantManualUpdateRequestEvent;
+use Santeacademie\SuperUploaderBundle\Exception\FileNotFoundException;
+use Santeacademie\SuperUploaderBundle\Exception\PlaceholderNotFound;
 use Santeacademie\SuperUploaderBundle\Interface\UploadableInterface;
-use Santeacademie\SuperUploaderBundle\Asset\Variant\AbstractVariant;
 use Santeacademie\SuperUploaderBundle\Wrapper\FallbackResourceFile;
+use Santeacademie\SuperUploaderBundle\Wrapper\SuperFile;
 use Santeacademie\SuperUtil\FileUtil;
-use Santeacademie\SuperUtil\IteratorUtil;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpFoundation\File\File;
 
 class UploadableEntityBridge extends AbstractUploadableBridge
@@ -20,8 +24,8 @@ class UploadableEntityBridge extends AbstractUploadableBridge
 
     public function __construct(
         string $appPublicDir,
-        protected string $uploadableResourcesMountpoint,
-        protected Filesystem $filesystem,
+        protected FilesystemOperator $resourcesFilesystem,
+        protected FilesystemOperator $uploadsFilesystem,
         protected UploadablePersistentBridge $uploadablePersistentBridge,
         protected UploadableTemporaryBridge $uploadableTemporaryBridge,
         protected EventDispatcherInterface $eventDispatcher
@@ -40,7 +44,6 @@ class UploadableEntityBridge extends AbstractUploadableBridge
             } else {
                 $uploadableEntity->{'set'.ucfirst($asset->getPropertyName())}($asset);
             }
-
             foreach ($asset->getVariants() as $variant) {
                 /** @var AbstractVariant $variant */
                 $variantFile = $this->getEntityAssetVariantFile($uploadableEntity, $asset, $variant, true);
@@ -53,12 +56,43 @@ class UploadableEntityBridge extends AbstractUploadableBridge
         }
     }
 
+
+    /**
+     * @throws PlaceholderNotFound
+     * @throws FilesystemException
+     * @throws FileNotFoundException
+     */
+    public function getPublicUrl(
+        UploadableInterface $entity,
+        string $assetName,
+        string $variantName,
+        bool $fallbackResource = AbstractVariant::DEFAULT_FALLBACK_RESOURCE
+    ): string
+    {
+
+        $file = $this->getNamedEntityAssetVariantFile($entity, $assetName, $variantName, $fallbackResource);
+
+        if (!$file) {
+            throw new FileNotFoundException();
+        }
+
+        if ($this->uploadsFilesystem->fileExists($file->getPathname())) {
+            return $this->uploadsFilesystem->publicUrl($file->getPathname());
+        }
+
+        if ($this->resourcesFilesystem->fileExists($file->getPathname())) {
+            return $this->resourcesFilesystem->publicUrl($file->getPathname());
+        }
+
+        throw new PlaceholderNotFound();
+    }
+
     public function getNamedEntityAssetVariantFile(
         UploadableInterface $entity,
         string $assetName,
         string $variantName,
         bool $fallbackResource = AbstractVariant::DEFAULT_FALLBACK_RESOURCE
-    ): ?File
+    ): ?SuperFile
     {
         $asset = $entity->getUploadableAssetByName($assetName);
         $variant = $asset->getVariant($variantName);
@@ -77,17 +111,16 @@ class UploadableEntityBridge extends AbstractUploadableBridge
         $assetPath = $this->getFallbackRessourceAssetPath($entity, $asset, true);
         $fallbackResourceFile = null;
 
-        if (is_dir($assetPath)) {
-            if (($fallbackResourceFileIterator = Finder::create()
-                ->in($assetPath)
-                ->files()
-                ->name("/^$variantFileNamePrefix/"))
-                ->hasResults()
+        if ($this->resourcesFilesystem->directoryExists($assetPath)) {
+            if ($fallbackResourceFileIterator = $this->resourcesFilesystem->listContents($assetPath)
+                ->filter(fn(StorageAttributes $attributes) => str_contains($attributes->path(), $variantFileNamePrefix))
+                ->toArray()
             ) {
-                $fallbackResourceFile = IteratorUtil::firstFile($fallbackResourceFileIterator);
+                /* @var FileAttributes $fallbackResourceFile */
+                $fallbackResourceFile = current($fallbackResourceFileIterator);
 
                 if (!is_null($fallbackResourceFile)) {
-                    $fallbackResourceFile = new FallbackResourceFile($fallbackResourceFile->getPathname());
+                    $fallbackResourceFile = new FallbackResourceFile($fallbackResourceFile->path(), false, $this->resourcesFilesystem);
                 }
             }
         }
@@ -100,7 +133,7 @@ class UploadableEntityBridge extends AbstractUploadableBridge
         AbstractAsset $asset,
         AbstractVariant $variant,
         bool $fallbackResource = AbstractVariant::DEFAULT_FALLBACK_RESOURCE
-    ): ?File
+    ): ?SuperFile
     {
         if (!$asset->supportsVariant($variant)) {
             throw new \LogicException(sprintf('Asset \'%s\' doesn\'t supports Variant \'%s\'',
@@ -115,14 +148,13 @@ class UploadableEntityBridge extends AbstractUploadableBridge
         $assetPath = $this->uploadablePersistentBridge->getUploadEntityAssetPath($entity, $asset);
         $variantFile = null;
 
-        if (is_dir($assetPath)) {
-            if (($variantFileIterator = Finder::create()
-                ->in($assetPath)
-                ->files()
-                ->name("/^$variantFileNamePrefix/"))
-                ->hasResults()
-            ) {
-                $variantFile = IteratorUtil::firstFile($variantFileIterator);
+        if ($this->uploadsFilesystem->has($assetPath)) {
+            $variantFileIterator = $this->uploadsFilesystem->listContents($assetPath, true);
+            foreach ($variantFileIterator as $foundVariantFile) {
+                if ($foundVariantFile['type'] === 'file' && str_starts_with($foundVariantFile->path(), $assetPath . '/' . $variantFileNamePrefix)) {
+                    $variantFile = new SuperFile($foundVariantFile->path(), true, $this->uploadsFilesystem);
+                    break;
+                }
             }
         }
 
@@ -144,16 +176,14 @@ class UploadableEntityBridge extends AbstractUploadableBridge
     public function getFallbackRessourceAssetPath(UploadableInterface $entity, AbstractAsset $asset, $create = false): string
     {
         // resources/trainer-xxxx/picture/trainer_profile
-        $dir = sprintf('%s%s/%s/%s/%s',
-            $this->getPublicDir(),
-            $this->uploadableResourcesMountpoint,
+        $dir = sprintf('%s/%s/%s',
             $entity->getUploadEntityPath(),
             $asset->getMediaType(),
             $asset->getName()
         );
 
         if (!is_dir($dir) && $create) {
-            $this->filesystem->mkdir($dir);
+            $this->resourcesFilesystem->createDirectory($dir);
         }
 
         return $dir;

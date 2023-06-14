@@ -39,11 +39,11 @@ class SuperUploaderExtension extends Extension implements CompilerPassInterface
 
         $this->configurePersistence($loader, $container, $config);
 
-        foreach($config['mountpoints'] as $mntName => $mntValue) {
-            $container->setParameter('super_uploader.mountpoint.'.$mntName, $mntValue);
+        foreach($config['flysystem'] as $mntName => $mntValue) {
+            $container->setAlias('super_uploader.flysystem.'.$mntName, $mntValue);
         }
-        
-         $container->registerForAutoconfiguration(VariantTansformerInterface::class)
+
+        $container->registerForAutoconfiguration(VariantTansformerInterface::class)
             ->addTag('super_uploader.transformer')
         ;
 
@@ -51,7 +51,7 @@ class SuperUploaderExtension extends Extension implements CompilerPassInterface
         $loader->load('services-autoconfigured.yaml');
     }
 
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         $this->assertRequiredBundlesAreEnabled($container);
     }
@@ -125,7 +125,7 @@ class SuperUploaderExtension extends Extension implements CompilerPassInterface
 
         $container
             ->findDefinition(UploadablePersistentBridge::class)
-            ->replaceArgument(4, $container->getDefinition('super_uploader.repository.variant_entity_map'))
+            ->replaceArgument(3, $container->getDefinition('super_uploader.repository.variant_entity_map'))
         ;
 
         $container

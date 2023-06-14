@@ -4,6 +4,7 @@ namespace Santeacademie\SuperUploaderBundle\Event;
 
 use Santeacademie\SuperUploaderBundle\Asset\Variant\AbstractVariant;
 use Santeacademie\SuperUploaderBundle\Interface\UploadableInterface;
+use Santeacademie\SuperUploaderBundle\Wrapper\SuperFile;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Contracts\EventDispatcher\Event;
 
@@ -13,8 +14,8 @@ abstract class AbstractVariantUpdateRequestEvent extends Event
     public function __construct(
         protected AbstractVariant $variant,
         protected  UploadableInterface $uploadableEntity,
-        protected ?File $oldValue,
-        protected ?File $newValue
+        protected ?SuperFile $oldValue,
+        protected ?SuperFile $newValue
     )
     {
 

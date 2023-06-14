@@ -12,10 +12,10 @@ Super Uploader Bundle
 ```yaml
 # config/packages/super_uploader.yaml
 super_uploader:
-    mountpoints:
-        uploads: 'uploads'
+    flysystem:
+        uploads: 'uploads.s3'
         resources: 'resources'
-        temp: 'uploads/tmp'
+        temp: 'temp.local'
 
     # Configures different persistence methods that can be used by the bundle for saving variant entity map.
     # Only one persistence method can be configured at a time.
