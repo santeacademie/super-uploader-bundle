@@ -24,4 +24,19 @@ class SuperFile extends File
     {
         return $this->filesystemOperator->read($this->getPathname());
     }
+
+    public function publicUrl(): string
+    {
+        return $this->filesystemOperator->publicUrl($this->getPathname());
+    }
+
+    public function getMimeType(): ?string
+    {
+        return $this->filesystemOperator->mimeType($this->getPathname());
+    }
+
+    public function __toString(): string
+    {
+        return $this->publicUrl();
+    }
 }

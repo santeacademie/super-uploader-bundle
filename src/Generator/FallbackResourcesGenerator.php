@@ -34,7 +34,7 @@ class FallbackResourcesGenerator
     private function generatePictureVariantResource(UploadableInterface $entity, PictureVariant $variant): File
     {
         $assetPath = $this->getFallbackRessourceAssetPath($entity, $variant->getAsset(), true);
-        $variantResourceFileName = $this->uploadableEntityBridge->getVariantFileName($variant, 'png');
+        $variantResourceFileName = $this->uploadableEntityBridge->getVariantFileName($variant, extension: 'png');
         $resourceFile = new SuperFile(sprintf('%s/%s', $assetPath, $variantResourceFileName), false, $this->filesystem);
 
         $fontSize = $variant->getWidth() / 12;
@@ -90,7 +90,7 @@ class FallbackResourcesGenerator
                 $assetPath = $this->getFallbackRessourceAssetPath($object, $asset, true);
 
                 if ($reset) {
-                    $this->filesystem->delete($assetPath);
+                    $this->filesystem->deleteDirectory($assetPath);
                 }
 
                 $files[$name][$asset->getName()] = [];
@@ -108,13 +108,7 @@ class FallbackResourcesGenerator
 
     private function getFallbackRessourceAssetPath(UploadableInterface $entity, AbstractAsset $asset, bool $create = false): string
     {
-        $dir = $this->uploadableEntityBridge->getFallbackRessourceAssetPath($entity, $asset, false);
-
-        if (!$this->filesystem->directoryExists($dir) && $create) {
-            $this->filesystem->createDirectory($dir);
-        }
-
-        return $dir;
+        return $this->uploadableEntityBridge->getFallbackRessourceAssetPath($entity, $asset);
     }
 
     private function getFontPath(): string

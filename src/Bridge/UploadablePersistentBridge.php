@@ -45,7 +45,7 @@ class UploadablePersistentBridge extends AbstractUploadableBridge
     {
         $asset = $variant->getAsset();
         $entityAssetPath = $this->getUploadEntityAssetPath($uploadableEntity, $asset, true);
-        $variantFileNamePrefix = $this->getVariantFileName($variant);
+        $variantFileNamePrefix = $this->getVariantFileName($variant, uploadableEntity: $uploadableEntity);
 
         //variantFileName = $this->getVariantFileName($variant, $variant->getTemporaryFile()->guessExtension(), StringUtil::generateRandomPassword());
         // Reuse old temporary name (important)
