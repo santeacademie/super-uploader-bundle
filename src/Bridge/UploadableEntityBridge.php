@@ -148,13 +148,11 @@ class UploadableEntityBridge extends AbstractUploadableBridge
         $assetPath = $this->uploadablePersistentBridge->getUploadEntityAssetPath($entity, $asset);
         $variantFile = null;
 
-        if ($this->uploadsFilesystem->has($assetPath)) {
-            $variantFileIterator = $this->uploadsFilesystem->listContents($assetPath, true);
-            foreach ($variantFileIterator as $foundVariantFile) {
-                if ($foundVariantFile['type'] === 'file' && str_starts_with($foundVariantFile->path(), $assetPath . '/' . $variantFileNamePrefix)) {
-                    $variantFile = new SuperFile($foundVariantFile->path(), true, $this->uploadsFilesystem);
-                    break;
-                }
+        $variantFileIterator = $this->uploadsFilesystem->listContents($assetPath, true);
+        foreach ($variantFileIterator as $foundVariantFile) {
+            if ($foundVariantFile['type'] === 'file' && str_starts_with($foundVariantFile->path(), $assetPath . '/' . $variantFileNamePrefix)) {
+                $variantFile = new SuperFile($foundVariantFile->path(), true, $this->uploadsFilesystem);
+                break;
             }
         }
 
