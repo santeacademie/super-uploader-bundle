@@ -56,35 +56,6 @@ class UploadableEntityBridge extends AbstractUploadableBridge
         }
     }
 
-
-    /**
-     * @throws PlaceholderNotFound
-     * @throws FilesystemException
-     * @throws FileNotFoundException
-     */
-    public function getPublicUrl(
-        UploadableInterface $entity,
-        string $assetName,
-        string $variantName,
-        bool $fallbackResource = AbstractVariant::DEFAULT_FALLBACK_RESOURCE
-    ): string
-    {
-        try {
-
-
-            $file = $this->getNamedEntityAssetVariantFile($entity, $assetName, $variantName, $fallbackResource);
-
-            if (!$file) {
-                throw new FileNotFoundException();
-            }
-
-            return $this->uploadsFilesystem->publicUrl($file->getPathname());
-
-        } catch (FileNotFoundException|PlaceholderNotFound $exception) {
-            return '';
-        }
-    }
-
     public function getNamedEntityAssetVariantFile(
         UploadableInterface $entity,
         string $assetName,
