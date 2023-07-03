@@ -114,8 +114,8 @@ class UploadablePersistentBridge extends AbstractUploadableBridge
             ->setAssetClass(get_class($asset))
             ->setVariantClass(get_class($variant))
             ->setVariantTypeClass($variant->getVariantTypeClass())
-            ->setFileExtension($this->filesystem->mimeType($variantFile))
-            ->setFileSize((float) $this->filesystem->fileSize($variantFile))
+            ->setFileExtension($variantFile->guessExtension())
+            ->setFileSize((float) $variantFile->getSize())
         ;
 
         if (property_exists($variant, 'width')) {
