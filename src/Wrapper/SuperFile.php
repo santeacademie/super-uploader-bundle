@@ -35,6 +35,13 @@ class SuperFile extends File
         return $this->filesystemOperator->mimeType($this->getPathname());
     }
 
+    public function guessExtension(): ?string
+    {
+        $mimeTypes = new MimeTypes();
+        $exts = $mimeTypes->getExtensions($this->filesystemOperator->mimeType($this->getPathname()));
+        return $exts[0];
+    }
+
     public function __toString(): string
     {
         return $this->publicUrl();
