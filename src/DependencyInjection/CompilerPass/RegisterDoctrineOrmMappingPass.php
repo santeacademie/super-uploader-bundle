@@ -18,7 +18,6 @@ class RegisterDoctrineOrmMappingPass extends DoctrineOrmMappingsPass
             namespaces: ['Santeacademie\SuperUploaderBundle\Model'],
             managerParameters: ['super_uploader.persistence.doctrine.manager'],
             enabledParameter: 'super_uploader.persistence.doctrine.enabled',
-            aliasMap: ['SuperUploaderBundle' => 'Santeacademie\SuperUploaderBundle\Model']
         );
     }
 }
