@@ -19,7 +19,7 @@ use Santeacademie\SuperUtil\PathUtil;
 use Santeacademie\SuperUtil\StringUtil;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
-use Symfony\Component\HttpFoundation\File\File;
+use Santeacademie\SuperUploaderBundle\Wrapper\SuperFile;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class UploadablePersistentBridge extends AbstractUploadableBridge
@@ -56,7 +56,7 @@ class UploadablePersistentBridge extends AbstractUploadableBridge
         }
 
         // Move temporary Variant file in Asset path
-        $variantFile = new File(sprintf('%s/%s', $entityAssetPath, $variantFileName), false);
+        $variantFile = new SuperFile(sprintf('%s/%s', $entityAssetPath, $variantFileName), false, $this->filesystem);
 
         $filesToDelete = $this->filesystem->listContents($entityAssetPath)
             ->filter(fn (StorageAttributes $attributes) => str_starts_with($attributes->path(), $entityAssetPath . '/' . $variantFileNamePrefix))

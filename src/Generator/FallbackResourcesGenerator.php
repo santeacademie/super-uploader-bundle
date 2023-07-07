@@ -12,7 +12,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Santeacademie\SuperUploaderBundle\Wrapper\SuperFile;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
-use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpKernel\KernelInterface;
 
 class FallbackResourcesGenerator
@@ -31,7 +30,7 @@ class FallbackResourcesGenerator
         $this->font = $this->appPublicDir.'/fonts/verdana.ttf';
     }
 
-    private function generatePictureVariantResource(UploadableInterface $entity, PictureVariant $variant): File
+    private function generatePictureVariantResource(UploadableInterface $entity, PictureVariant $variant): SuperFile
     {
         $assetPath = $this->getFallbackRessourceAssetPath($entity, $variant->getAsset(), true);
         $variantResourceFileName = $this->uploadableEntityBridge->getVariantFileName($variant, extension: 'png');

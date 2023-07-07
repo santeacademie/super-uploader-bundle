@@ -5,6 +5,7 @@ namespace Santeacademie\SuperUploaderBundle\Wrapper;
 use League\Flysystem\FilesystemOperator;
 use Santeacademie\SuperUploaderBundle\Exception\FileNotFoundException;
 use Symfony\Component\HttpFoundation\File\File;
+use Symfony\Component\Mime\MimeTypes;
 
 class SuperFile extends File
 {

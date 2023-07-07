@@ -6,7 +6,7 @@ use Santeacademie\SuperUploaderBundle\Asset\Variant\AbstractVariant;
 use Santeacademie\SuperUploaderBundle\Asset\Variant\PictureVariant;
 use Santeacademie\SuperUploaderBundle\Interface\VariantTansformerInterface;
 use Santeacademie\SuperUploaderBundle\Form\AbstractVariantType;
-use Symfony\Component\HttpFoundation\File\File;
+use Santeacademie\SuperUploaderBundle\Wrapper\SuperFile;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ImagickUglyVariantType extends AbstractVariantType implements VariantTansformerInterface
@@ -17,7 +17,7 @@ class ImagickUglyVariantType extends AbstractVariantType implements VariantTansf
         return $this;
     }
 
-    public function transformFile(File $file, AbstractVariant $variant, array $variantTypeData): File
+    public function transformFile(SuperFile $file, AbstractVariant $variant, array $variantTypeData): SuperFile
     {
         $imagick = new \Imagick($file->getRealPath());
         $imagick->rotateimage('green', 25);
