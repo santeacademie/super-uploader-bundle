@@ -7,7 +7,7 @@ use Santeacademie\SuperUploaderBundle\Asset\Variant\PictureVariant;
 use Symfony\Component\Asset\UrlPackage;
 use Symfony\Component\Asset\VersionStrategy\EmptyVersionStrategy;
 use Symfony\Component\Config\Definition\Exception\DuplicateKeyException;
-use Symfony\Component\HttpFoundation\File\File;
+use Santeacademie\SuperUploaderBundle\Wrapper\SuperFile;
 use Symfony\Component\HttpFoundation\Request;
 
 abstract class AbstractAsset
@@ -104,12 +104,12 @@ abstract class AbstractAsset
         return $this->variants;
     }
 
-    public function getVariantFile(string $variantName, bool $fallbackResource = AbstractVariant::DEFAULT_FALLBACK_RESOURCE): ?File
+    public function getVariantFile(string $variantName, bool $fallbackResource = AbstractVariant::DEFAULT_FALLBACK_RESOURCE): ?SuperFile
     {
         return $this->getVariant($variantName)->getVariantFile($fallbackResource);
     }
 
-    public function setVariantFile(string $variantName, File $variantFile): self
+    public function setVariantFile(string $variantName, SuperFile $variantFile): self
     {
         $this->getVariant($variantName)->setVariantFile($variantFile);
 

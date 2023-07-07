@@ -6,7 +6,7 @@ use League\Flysystem\FileAttributes;
 use Santeacademie\SuperUploaderBundle\Asset\AbstractAsset;
 use Santeacademie\SuperUploaderBundle\Wrapper\FallbackResourceFile;
 use Santeacademie\SuperUploaderBundle\Wrapper\TemporaryFile;
-use Symfony\Component\HttpFoundation\File\File;
+use Santeacademie\SuperUploaderBundle\Wrapper\SuperFile;
 use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 
 abstract class AbstractVariant
@@ -88,7 +88,7 @@ abstract class AbstractVariant
         return $this;
     }
 
-    public function getVariantFile(bool $fallbackResource = AbstractVariant::DEFAULT_FALLBACK_RESOURCE): File|FileAttributes|null
+    public function getVariantFile(bool $fallbackResource = AbstractVariant::DEFAULT_FALLBACK_RESOURCE): SuperFile|null
     {
         if (!$fallbackResource && $this->variantFile instanceof FallbackResourceFile) {
             return null;

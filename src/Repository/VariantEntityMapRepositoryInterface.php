@@ -3,7 +3,7 @@
 namespace Santeacademie\SuperUploaderBundle\Repository;
 
 use Santeacademie\SuperUploaderBundle\Asset\Variant\AbstractVariant;
-use Symfony\Component\HttpFoundation\File\File;
+use Santeacademie\SuperUploaderBundle\Wrapper\SuperFile;
 use Santeacademie\SuperUploaderBundle\Model\AbstractVariantEntityMap;
 
 interface VariantEntityMapRepositoryInterface
@@ -13,6 +13,6 @@ interface VariantEntityMapRepositoryInterface
     
     public function deleteAnyOldEntityMap(AbstractVariant $variant, AbstractVariantEntityMap $newVariantEntityMap): void;
     
-    public function deleteEntityMapByFile(File $file): void;
+    public function deleteEntityMapByFile(SuperFile $file): void;
 
 }

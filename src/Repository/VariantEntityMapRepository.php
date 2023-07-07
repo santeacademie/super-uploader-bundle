@@ -3,6 +3,7 @@
 namespace Santeacademie\SuperUploaderBundle\Repository;
 
 use Santeacademie\SuperUploaderBundle\Manager\Doctrine\VariantEntityMapManager;
+use Santeacademie\SuperUploaderBundle\Wrapper\SuperFile;
 use Santeacademie\SuperUtil\StringUtil;
 use Santeacademie\SuperUploaderBundle\Asset\Variant\AbstractVariant;
 use Santeacademie\SuperUploaderBundle\Manager\VariantEntityMapManagerInterface;
@@ -73,7 +74,7 @@ final class VariantEntityMapRepository implements VariantEntityMapRepositoryInte
         $qb->getQuery()->getResult();
     }
 
-    public function deleteEntityMapByFile(File $file): void
+    public function deleteEntityMapByFile(SuperFile $file): void
     {
         $em = $this->variantEntityMapManager->getEntityManager();
 

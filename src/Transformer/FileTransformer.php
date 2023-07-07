@@ -5,12 +5,12 @@ namespace Santeacademie\SuperUploaderBundle\Transformer;
 use Santeacademie\SuperUploaderBundle\Asset\Variant\AbstractVariant;
 use Santeacademie\SuperUploaderBundle\Interface\UploadableInterface;
 use Santeacademie\SuperUploaderBundle\Interface\VariantTansformerInterface;
-use Symfony\Component\HttpFoundation\File\File;
+use Santeacademie\SuperUploaderBundle\Wrapper\SuperFile;
 
 class FileTransformer implements VariantTansformerInterface
 {
 
-    public function transformFile(File $file, AbstractVariant $variant, array $variantTypeData): File
+    public function transformFile(SuperFile $file, AbstractVariant $variant, array $variantTypeData): SuperFile
     {
         return $file;
     }
