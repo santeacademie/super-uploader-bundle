@@ -9,6 +9,7 @@ use Santeacademie\SuperUploaderBundle\Asset\Variant\AbstractVariant;
 use Santeacademie\SuperUploaderBundle\Asset\Variant\PdfVariant;
 use Santeacademie\SuperUploaderBundle\Ghostscript\Device\Pdf;
 use Santeacademie\SuperUploaderBundle\Interface\VariantTansformerInterface;
+use Santeacademie\SuperUploaderBundle\Wrapper\SuperFile;
 use Santeacademie\SuperUploaderBundle\Wrapper\TemporaryFile;
 use Symfony\Component\HttpFoundation\File\File;
 
@@ -17,7 +18,7 @@ class PdfTransformer implements VariantTansformerInterface
     /**
      * @throws Exception
      */
-    public function transformFile(File $file, PdfVariant|AbstractVariant $variant, array $variantTypeData): File
+    public function transformFile(SuperFile $file, PdfVariant|AbstractVariant $variant, array $variantTypeData): SuperFile
     {
         if ($file->guessExtension() !== PdfVariant::EXTENSION) {
             $imagick = new Imagick();

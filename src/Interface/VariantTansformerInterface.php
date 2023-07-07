@@ -3,11 +3,11 @@
 namespace Santeacademie\SuperUploaderBundle\Interface;
 
 use Santeacademie\SuperUploaderBundle\Asset\Variant\AbstractVariant;
-use Symfony\Component\HttpFoundation\File\File;
+use Santeacademie\SuperUploaderBundle\Wrapper\SuperFile;
 
 interface VariantTansformerInterface
 {
 
-    public function transformFile(File $file, AbstractVariant $variant, array $variantTypeData): File;
+    public function transformFile(SuperFile $file, AbstractVariant $variant, array $variantTypeData): SuperFile;
 
 }

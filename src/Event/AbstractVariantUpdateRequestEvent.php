@@ -31,24 +31,24 @@ abstract class AbstractVariantUpdateRequestEvent extends Event
         return $this->uploadableEntity;
     }
 
-    public function getOldValue(): ?File
+    public function getOldValue(): ?SuperFile
     {
         return $this->oldValue;
     }
 
-    public function setOldValue(?File $oldValue): self
+    public function setOldValue(?SuperFile $oldValue): self
     {
         $this->oldValue = $oldValue;
 
         return $this;
     }
 
-    public function getNewValue(): ?File
+    public function getNewValue(): ?SuperFile
     {
         return $this->newValue;
     }
 
-    public function setNewValue(?File $newValue): self
+    public function setNewValue(?SuperFile $newValue): self
     {
         $this->newValue = $newValue;
 

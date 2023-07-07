@@ -6,7 +6,7 @@ use League\Flysystem\FilesystemOperator;
 use Santeacademie\SuperUploaderBundle\Asset\Variant\AbstractVariant;
 use Santeacademie\SuperUploaderBundle\Interface\UploadableInterface;
 use Santeacademie\SuperUploaderBundle\Interface\VariantTansformerInterface;
-use Symfony\Component\HttpFoundation\File\File;
+use Santeacademie\SuperUploaderBundle\Wrapper\SuperFile;
 
 class ImagickCropTransformer implements VariantTansformerInterface
 {
@@ -15,7 +15,7 @@ class ImagickCropTransformer implements VariantTansformerInterface
     {
     }
 
-    public function transformFile(File $file, AbstractVariant $variant, array $variantTypeData): File
+    public function transformFile(SuperFile $file, AbstractVariant $variant, array $variantTypeData): SuperFile
     {
         $imagick = new \Imagick();
         $imagick->readImageBlob($file->getContent());
