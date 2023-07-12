@@ -43,7 +43,7 @@ class SuperFile extends File
         return $exts[0];
     }
 
-    public function getSize(): ?string
+    public function getSize(): int
     {
         return $this->filesystemOperator->fileSize($this->getPathname());
     }
