@@ -15,7 +15,7 @@ class SuperFile extends File
         bool $checkPath,
         private FilesystemOperator $filesystemOperator)
     {
-        if ($checkPath && !$this->filesystemOperator->fileExists($path)) {
+        if ($checkPath && !$this->exists($path)) {
             throw new FileNotFoundException($path);
         }
         parent::__construct($path, false);
@@ -46,6 +46,11 @@ class SuperFile extends File
     public function getSize(): int
     {
         return $this->filesystemOperator->fileSize($this->getPathname());
+    }
+
+    public function exists(): bool
+    {
+        return $this->filesystemOperator->fileExists($this->getPathname());
     }
 
     public function __toString(): string
