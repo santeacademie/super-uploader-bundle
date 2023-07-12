@@ -15,7 +15,7 @@ class SuperFile extends File
         bool $checkPath,
         private FilesystemOperator $filesystemOperator)
     {
-        if ($checkPath && !$this->exists($path)) {
+        if ($checkPath && !$this->filesystemOperator->fileExists($path)) {
             throw new FileNotFoundException($path);
         }
         parent::__construct($path, false);
