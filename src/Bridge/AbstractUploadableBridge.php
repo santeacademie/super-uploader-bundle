@@ -40,7 +40,7 @@ abstract class AbstractUploadableBridge
         return sprintf('%s-%s%s%s',
             $variant->getAsset()->getName(),
             $variant->getName(),
-            empty($suffix)      ? '' : '-'.md5($suffix),
+            empty($suffix)      ? '' : '-'.$suffix,
             empty($extension)   ? '' : '.'.$extension
         );
     }
