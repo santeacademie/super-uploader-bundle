@@ -112,7 +112,7 @@ class UploadableEntityBridge extends AbstractUploadableBridge
         }
 
         // trainer_profile-rectangle[randomSuffix + extension to be defined]
-        $variantFileNamePrefix = $this->getVariantFileName($variant, $entity);
+        $variantFileNamePrefix = $this->getVariantFileName($variant, '', '-');
         $variantFileNamePrefix = preg_replace('#(.+)--$#', "$1-", $variantFileNamePrefix);
         $assetPath = $this->uploadablePersistentBridge->getUploadEntityAssetPath($entity, $asset);
         $variantFile = null;
