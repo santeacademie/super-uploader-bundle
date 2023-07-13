@@ -169,7 +169,7 @@ class UploadablePersistentBridge extends AbstractUploadableBridge
             $this->variantEntityMapRepository->deleteEntityMapByFile($file);
         }
 
-        $this->filesystem->remove($file);
+        $this->filesystem->delete($file);
         $variant->setVariantFile(null);
 
         $this->eventDispatcher->dispatch(new PersistentVariantDeletedEvent($variant, $uploadableEntity));
