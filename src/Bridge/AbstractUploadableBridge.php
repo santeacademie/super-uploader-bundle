@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace Santeacademie\SuperUploaderBundle\Bridge;
 
@@ -34,14 +34,14 @@ abstract class AbstractUploadableBridge
         return $this->isAbsolutePublicDirEnabled() ? $this->appPublicDir.'/' : '';
     }
 
-    public function getVariantFileName(AbstractVariant $variant, string $extension = ''): string
+    public function getVariantFileName(AbstractVariant $variant, string $extension = '', string $suffix = '')
     {
-        // trainer_profile-rectangle[-hash][.extension]
-        return sprintf('%s-%s-%s%s',
+        // trainer_profile-rectangle[hashed_suffix][.extension]
+        return sprintf('%s-%s%s%s',
             $variant->getAsset()->getName(),
             $variant->getName(),
-            md5(StringUtil::generateRandomPassword()),
-            empty($extension)        ? '' : '.' . $extension,
+            empty($suffix)      ? '' : '-'.md5($suffix),
+            empty($extension)   ? '' : '.'.$extension
         );
     }
 
