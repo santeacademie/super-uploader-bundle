@@ -140,7 +140,7 @@ class AssetType extends AbstractAssetType
                 if (!$file instanceof TemporaryFile) {
                     // Replace the uploaded File by taking the temporary one
                     $file = $this->uploadableTemporaryBridge->saveGenuineTemporaryFile($file);
-                    $data[$variantName]['temporaryFile'] = $file->publicUrl();
+                    $data[$variantName]['temporaryFile'] = $file->getPathname();
                 }
 
                 $data[$variantName]['variantFile'] = $file;
