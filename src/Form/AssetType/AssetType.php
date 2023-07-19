@@ -2,6 +2,7 @@
 
 namespace Santeacademie\SuperUploaderBundle\Form\AssetType;
 
+use League\Flysystem\FilesystemOperator;
 use Santeacademie\SuperUploaderBundle\Asset\Variant\AbstractVariant;
 use Santeacademie\SuperUploaderBundle\Bridge\UploadableEntityBridge;
 use Santeacademie\SuperUploaderBundle\Event\VariantFormUpdateRequestEvent;
@@ -28,7 +29,8 @@ class AssetType extends AbstractAssetType
     public function __construct(
         private UploadableTemporaryBridge $uploadableTemporaryBridge,
         private UploadableEntityBridge $uploadableEntityBridge,
-        private EventDispatcherInterface $eventDispatcher
+        private EventDispatcherInterface $eventDispatcher,
+        private FilesystemOperator $filesystemOperator
     )
     {
 
@@ -117,7 +119,7 @@ class AssetType extends AbstractAssetType
                 if (is_null($file)) {
                     if ($temporaryFileExists = !empty($variantTypeData['temporaryFile'] && is_file($variantTypeData['temporaryFile']))) {
                         // Simulate an uploaded File by taking the temporary one
-                        $file = new TemporaryFile($variantTypeData['temporaryFile']);
+                        $file = new TemporaryFile($variantTypeData['temporaryFile'], false, $this->filesystemOperator);
                     }
                 }
 
@@ -138,7 +140,7 @@ class AssetType extends AbstractAssetType
                 if (!$file instanceof TemporaryFile) {
                     // Replace the uploaded File by taking the temporary one
                     $file = $this->uploadableTemporaryBridge->saveGenuineTemporaryFile($file);
-                    $data[$variantName]['temporaryFile'] = $file->getPathname();
+                    $data[$variantName]['temporaryFile'] = $file->publicUrl();
                 }
 
                 $data[$variantName]['variantFile'] = $file;

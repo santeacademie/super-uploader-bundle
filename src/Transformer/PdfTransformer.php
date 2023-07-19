@@ -5,6 +5,7 @@ namespace Santeacademie\SuperUploaderBundle\Transformer;
 use Exception;
 use Imagick;
 use Org_Heigl\Ghostscript\Ghostscript;
+use League\Flysystem\FilesystemOperator;
 use Santeacademie\SuperUploaderBundle\Asset\Variant\AbstractVariant;
 use Santeacademie\SuperUploaderBundle\Asset\Variant\PdfVariant;
 use Santeacademie\SuperUploaderBundle\Ghostscript\Device\Pdf;
@@ -15,6 +16,11 @@ use Symfony\Component\HttpFoundation\File\File;
 
 class PdfTransformer implements VariantTansformerInterface
 {
+
+    public function __construct(private FilesystemOperator $filesystemOperator)
+    {
+    }
+
     /**
      * @throws Exception
      */
@@ -22,12 +28,12 @@ class PdfTransformer implements VariantTansformerInterface
     {
         if ($file->guessExtension() !== PdfVariant::EXTENSION) {
             $imagick = new Imagick();
-            $imagick->readImage($file->getRealPath());
+            $imagick->readImage($file->publicUrl());
             $imagick->setFilename($file->getBasename());
 
             $imagick->writeImage();
 
-            $file = new TemporaryFile($file->getPath().'/'.$imagick->getFilename());
+            $file = new TemporaryFile($file->getPath().'/'.$imagick->getFilename(), false, $this->filesystemOperator);
         }
 
         if ((!is_null($variant->getSizeLimit()) && $file->getSize() > $variant->getSizeLimit())) {
@@ -38,7 +44,7 @@ class PdfTransformer implements VariantTansformerInterface
             }
 
             $gs->setDevice(new Pdf());
-            $gs->setInputFile($file->getRealPath());
+            $gs->setInputFile($file->publicUrl());
 
             $compressedFileBaseName = sprintf(
                 '%s_compressed',
@@ -50,7 +56,7 @@ class PdfTransformer implements VariantTansformerInterface
             $compressedFilename = $compressedFileBaseName.'.'.$file->getExtension();
 
             if ($gs->render()) {
-                file_put_contents($file->getRealPath(), file_get_contents($file->getPath().'/'.$compressedFilename));
+                file_put_contents($file->publicUrl(), file_get_contents($file->getPath().'/'.$compressedFilename));
             } else {
                 throw new Exception(
                     sprintf(
