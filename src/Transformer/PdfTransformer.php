@@ -33,7 +33,7 @@ class PdfTransformer implements VariantTansformerInterface
 
             $imagick->writeImage();
 
-            $file = new TemporaryFile($file->getPath().'/'.$imagick->getFilename(), false);
+            $file = new TemporaryFile($file->getPath().'/'.$imagick->getFilename(), false, $this->filesystemOperator);
         }
 
         if ((!is_null($variant->getSizeLimit()) && $file->getSize() > $variant->getSizeLimit())) {
