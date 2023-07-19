@@ -19,9 +19,9 @@ class ImagickUglyVariantType extends AbstractVariantType implements VariantTansf
 
     public function transformFile(SuperFile $file, AbstractVariant $variant, array $variantTypeData): SuperFile
     {
-        $imagick = new \Imagick($file->getRealPath());
+        $imagick = new \Imagick($file->publicUrl());
         $imagick->rotateimage('green', 25);
-        $imagick->writeImage($file->getPathname());
+        $imagick->writeImage($file->publicUrl());
 
         return $file;
     }

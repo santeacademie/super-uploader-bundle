@@ -82,7 +82,7 @@ final class VariantEntityMapRepository implements VariantEntityMapRepositoryInte
             $em->createQueryBuilder()
                 ->delete($this->variantEntityMapManager->getEntityClass(), 'e')
                 ->where('e.fullPath = :fullPath')
-                ->setParameter('fullPath', $file->getPathname())
+                ->setParameter('fullPath', $file->publicUrl())
         ;
 
         $qb->getQuery()->getResult();

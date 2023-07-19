@@ -107,7 +107,7 @@ class UploadablePersistentBridge extends AbstractUploadableBridge
         $variantEntityMap = (new VariantEntityMap())
             ->setEntityClass(PathUtil::sanitizeForProxy(get_class($uploadableEntity)))
             ->setEntityIdentifier("".$uploadableEntity->getUploadableKeyValue())
-            ->setFullPath($variantFile->getPathname())
+            ->setFullPath($variantFile->publicUrl())
             ->setAssetName($asset->getName())
             ->setVariantName($variant->getName())
             ->setMediaType($asset->getMediaType())

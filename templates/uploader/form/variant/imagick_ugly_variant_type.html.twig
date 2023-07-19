@@ -10,7 +10,7 @@
 
 		{% set isEditingFile = (form.variantFile.vars.data is not null) %}
 
-		{% set filePath = isEditingFile ? (form.variantFile.vars.data.pathname) : form.vars.data|uploadable(asset.name, variant.name) %}
+		{% set filePath = isEditingFile ? (form.variantFile.vars.data.publicUrl) : form.vars.data|uploadable(asset.name, variant.name) %}
 
 		<div class="image-wrapper " style="background-image: url('{{ asset(filePath) }}?{{ 'now'|date('U') }}');">
 		</div>
