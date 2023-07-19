@@ -122,10 +122,13 @@ return static function (ContainerConfigurator $container): void {
         ->alias(ImagickCropTransformer::class, 'super_uploader.transformer.imagick_crop')
             
         ->set('super_uploader.transformer.identity', FileTransformer::class)
-            ->alias(FileTransformer::class, 'super_uploader.transformer.identity')
+        ->alias(FileTransformer::class, 'super_uploader.transformer.identity')
 
         ->set('super_uploader.transformer.pdf', PdfTransformer::class)
-            ->alias(PdfTransformer::class, 'super_uploader.transformer.pdf')
+        ->args([
+            service('super_uploader.flysystem.temp'),
+        ])
+        ->alias(PdfTransformer::class, 'super_uploader.transformer.pdf')
             
         ->set('super_uploader.form.variant_type.imagick_crop', ImagickCropVariantType::class)
             ->args([

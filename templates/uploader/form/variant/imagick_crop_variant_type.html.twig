@@ -28,7 +28,7 @@
 			data-topLeftY="{{ form.topLeftY.vars.value }}"
 			data-bottomRightX="{{ form.bottomRightX.vars.value }}"
 			data-bottomRightY="{{ form.bottomRightY.vars.value }}"
-			data-variantFile="{{ isEditingFile ? ('/' ~ form.variantFile.vars.data.pathname) }}">
+			data-variantFile="{{ isEditingFile ? ('/' ~ form.variantFile.vars.data.publicUrl) }}">
 		</div>
 
 		{{ form_rest(form) }}
