@@ -173,7 +173,7 @@ trait UploadableTrait
     {
         $uploadableKeyValue = $this->getUploadableKeyValue();
 
-        return implode('/', str_split($uploadableKeyValue, self::$uploadableKeySplitLength));
+        return implode('/', str_split($uploadableKeyValue ?? '', self::$uploadableKeySplitLength));
     }
 
 
