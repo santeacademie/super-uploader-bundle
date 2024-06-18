@@ -15,8 +15,7 @@ use Symfony\Component\HttpFoundation\File\File;
 
 final class VariantEntityMapRepository implements VariantEntityMapRepositoryInterface
 {
-
-
+    
     public function __construct(protected VariantEntityMapManager $variantEntityMapManager)
     {
 
@@ -28,32 +27,46 @@ final class VariantEntityMapRepository implements VariantEntityMapRepositoryInte
 
         $em = $this->variantEntityMapManager->getEntityManager();
         $metadata = $em->getClassMetadata(get_class($map));
-     
+
         $fields = $metadata->getFieldNames();
 
-        $sql = sprintf("INSERT INTO %s.%s(%s) VALUES(%s)",
+        // Build the list of columns and placeholders
+        $columns = array_map(function($field) {
+            return StringUtil::camelCaseToSnakeCase($field);
+        }, $fields);
+        $placeholders = array_fill(0, count($fields), '?');
+
+        // Construct the SQL query
+        $sql = sprintf(
+            "INSERT INTO %s.%s (%s) VALUES (%s)",
             $metadata->getSchemaName(),
             $metadata->getTableName(),
-            implode(',', array_map(function($field) {
-                return StringUtil::camelCaseToSnakeCase($field);
-            }, $fields)),
-            implode(',', array_map(function($field) use($map) {
-                $value = $map->{'get'.ucfirst($field)}();
-
-                if (is_numeric($value)) {
-                    return $value;
-                } elseif (is_null($value)) {
-                    return "null";
-                } elseif ($value instanceof \DateTimeInterface) {
-                    return sprintf("'%s'", $value->format('Y-m-d H:i:s'));
-                }
-
-                return sprintf("'%s'", pg_escape_string($value));
-            }, $fields))
+            implode(',', $columns),
+            implode(',', $placeholders)
         );
 
-        $em->getConnection()->executeStatement($sql);
+        // Prepare the statement
+        $stmt = $em->getConnection()->prepare($sql);
+
+        // Bind parameters
+        foreach ($fields as $index => $field) {
+            $value = $map->{'get'.ucfirst($field)}();
+
+            if (is_numeric($value)) {
+                $stmt->bindValue($index + 1, $value, \PDO::PARAM_INT);
+            } elseif (is_null($value)) {
+                $stmt->bindValue($index + 1, null, \PDO::PARAM_NULL);
+            } elseif ($value instanceof \DateTimeInterface) {
+                $stmt->bindValue($index + 1, $value->format('Y-m-d H:i:s'));
+            } else {
+                $stmt->bindValue($index + 1, $value);
+            }
+        }
+
+        // Execute the statement
+        $stmt->executeQuery();
     }
+
 
     public function deleteAnyOldEntityMap(AbstractVariant $variant, AbstractVariantEntityMap $newVariantEntityMap): void
     {
