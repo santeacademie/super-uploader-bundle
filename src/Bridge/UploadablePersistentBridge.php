@@ -5,6 +5,7 @@ namespace Santeacademie\SuperUploaderBundle\Bridge;
 use ErrorException;
 use League\Flysystem\FilesystemOperator;
 use League\Flysystem\StorageAttributes;
+use League\Flysystem\UnableToSetVisibility;
 use Santeacademie\SuperUploaderBundle\Asset\Variant\PictureVariant;
 use Santeacademie\SuperUploaderBundle\Event\PersistentVariantCreatedEvent;
 use Santeacademie\SuperUploaderBundle\Event\PersistentVariantDeletedEvent;
@@ -67,9 +68,11 @@ class UploadablePersistentBridge extends AbstractUploadableBridge
             $this->filesystem->delete($file);
         }
 
-
-        $this->filesystem->write($variantFile->getPathname(), $variant->getTemporaryFile()->getContent());
-
+        try {
+            $this->filesystem->write($variantFile->getPathname(), $variant->getTemporaryFile()->getContent());
+        } catch(UnableToSetVisibility) {
+            // pass (chmod failed but it's ok)
+        }
 
         // Delete temporary artifacts (related to @ShowNoTransformation)
         //$this->filesystem->remove($variant->getTemporaryFile());
