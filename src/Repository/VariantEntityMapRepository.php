@@ -52,6 +52,11 @@ final class VariantEntityMapRepository implements VariantEntityMapRepositoryInte
         foreach ($fields as $index => $field) {
             $value = $map->{'get'.ucfirst($field)}();
             $stmt->bindValue($index + 1, $value);
+            if ($value instanceof \DateTimeInterface) {
+                $stmt->bindValue($index + 1, $value->format('Y-m-d H:i:s'));
+            } else {
+                $stmt->bindValue($index + 1, $value);
+            }
         }
 
         // Execute the statement
