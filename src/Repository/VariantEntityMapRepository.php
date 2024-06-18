@@ -15,7 +15,7 @@ use Symfony\Component\HttpFoundation\File\File;
 
 final class VariantEntityMapRepository implements VariantEntityMapRepositoryInterface
 {
-    
+
     public function __construct(protected VariantEntityMapManager $variantEntityMapManager)
     {
 
@@ -51,16 +51,7 @@ final class VariantEntityMapRepository implements VariantEntityMapRepositoryInte
         // Bind parameters
         foreach ($fields as $index => $field) {
             $value = $map->{'get'.ucfirst($field)}();
-
-            if (is_numeric($value)) {
-                $stmt->bindValue($index + 1, $value, \PDO::PARAM_INT);
-            } elseif (is_null($value)) {
-                $stmt->bindValue($index + 1, null, \PDO::PARAM_NULL);
-            } elseif ($value instanceof \DateTimeInterface) {
-                $stmt->bindValue($index + 1, $value->format('Y-m-d H:i:s'));
-            } else {
-                $stmt->bindValue($index + 1, $value);
-            }
+            $stmt->bindValue($index + 1, $value);
         }
 
         // Execute the statement
