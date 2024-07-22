@@ -61,7 +61,7 @@ class UploadableTemporaryBridge extends AbstractUploadableBridge
 
         $temporaryFullName = sprintf('%s/%s',
             $this->getTemporaryPath(true, $variant->getAsset()->getMediaType()),
-            $this->getVariantFileName($variant, $variant->getExtension(), StringUtil::generateRandomPassword())
+            $this->getVariantFileName($variant, $variant->getExtension(), md5($genuineFile->getContent()))
         );
 
         $temporaryVariantFile = new TemporaryFile($temporaryFullName, false, $this->filesystem);
