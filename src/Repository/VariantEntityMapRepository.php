@@ -39,7 +39,7 @@ final class VariantEntityMapRepository implements VariantEntityMapRepositoryInte
         // Construct the SQL query
         $sql = sprintf(
             "INSERT INTO %s%s (%s) VALUES (%s)",
-            $metadata->getSchemaName() ? sprint('%s.', $metadata->getSchemaName()) : '',
+            $metadata->getSchemaName() ? sprintf('%s.', $metadata->getSchemaName()) : '',
             $metadata->getTableName(),
             implode(',', $columns),
             implode(',', $placeholders)
