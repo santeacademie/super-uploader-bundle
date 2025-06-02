@@ -46,6 +46,14 @@ jQuery(function($) {
         var fileName = e.target.files[0].name;
         $(this).siblings('.custom-file-label').attr('title', fileName).html(fileName);
     });
+
+    $(document).on('click', '.variant-delete-button', function(e) {
+        e.preventDefault();
+        var $holder = $(this).parents('.asset-variant:eq(0)');
+        $holder.find('.variant-delete').val('delete');
+        $holder.find('.variant-preview').addClass('hidden');
+        $holder.find('.variant-button-actions').addClass('hidden');
+    });
 });
 
 window._uploadables.init = function() {
