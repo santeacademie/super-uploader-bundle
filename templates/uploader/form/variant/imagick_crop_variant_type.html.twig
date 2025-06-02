@@ -14,8 +14,11 @@
 
 		{% set uploadedVariant = form.vars.data|uploadable(variant.asset.name, variant.name) %}
 
-		<div class="image-wrapper {{ isEditingFile ? 'hidden' }}" style="background-image: url('{{ asset(uploadedVariant) }}?{{ 'now'|date('U') }}');">
-		</div>
+		{% if uploadedVariant %}
+			<div class="image-wrapper variant-preview {{ isEditingFile ? 'hidden' }}" style="background-image: url('{{ asset(uploadedVariant) }}?{{ 'now'|date('U') }}');"></div>
+		{% else %}
+			<span class="variant-no-preview">Pas de fichier disponible</span>
+		{% endif %}
 
 		<div id="{{ form.vars.id }}_croppie"
 			class="{{ not isEditingFile ? 'hidden' }} croppie"

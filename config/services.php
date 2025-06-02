@@ -1,21 +1,15 @@
 <?php
 
-use League\Flysystem\FilesystemOperator;
 use Santeacademie\SuperUploaderBundle\Form\VariantType\PdfVariantType;
 use Santeacademie\SuperUploaderBundle\Transformer\PdfTransformer;
 use function Symfony\Component\DependencyInjection\Loader\Configurator\service;
-use function Symfony\Component\DependencyInjection\Loader\Configurator\tagged_iterator;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
-use Santeacademie\SuperUploaderBundle\Manager\VariantEntityMapManagerInterface;
-use Santeacademie\SuperUploaderBundle\Repository\VariantEntityMapRepository;
-use Santeacademie\SuperUploaderBundle\Repository\VariantEntityMapRepositoryInterface;
 use Santeacademie\SuperUploaderBundle\Bridge\UploadableTemporaryBridge;
 use Santeacademie\SuperUploaderBundle\Bridge\UploadableEntityBridge;
 use Santeacademie\SuperUploaderBundle\Bridge\UploadablePersistentBridge;
 use Santeacademie\SuperUploaderBundle\Command\FallbackResourcesGeneratorCommand;
 use Santeacademie\SuperUploaderBundle\Command\GenerateDatabaseVariantMapCommand;
 use Santeacademie\SuperUploaderBundle\Generator\FallbackResourcesGenerator;
-use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpKernel\KernelInterface;
@@ -27,7 +21,6 @@ use Santeacademie\SuperUploaderBundle\Twig\UploaderTwigExtension;
 use Santeacademie\SuperUploaderBundle\Subscriber\UploadableSubscriber;
 use Santeacademie\SuperUploaderBundle\EventListener\UploadableEntityListener;
 use Santeacademie\SuperUploaderBundle\Interface\VariantTansformerInterface;
-use Santeacademie\SuperUploaderBundle\Select\SelectUploadMediaType;
 
 return static function (ContainerConfigurator $container): void {
     $services = $container->services();
@@ -105,6 +98,7 @@ return static function (ContainerConfigurator $container): void {
         ->set('super_uploader.form.asset_type', AssetType::class)
         ->args([
             service(UploadableTemporaryBridge::class),
+            service(UploadablePersistentBridge::class),
             service(UploadableEntityBridge::class),
             service(EventDispatcherInterface::class),
             service('super_uploader.flysystem.temp'),

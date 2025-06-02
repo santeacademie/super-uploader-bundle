@@ -10,6 +10,7 @@ use Santeacademie\SuperUploaderBundle\Wrapper\TemporaryFile;
 use Santeacademie\SuperUploaderBundle\Interface\UploadableInterface;
 use Santeacademie\SuperUploaderBundle\Form\AbstractAssetType;
 use Santeacademie\SuperUploaderBundle\Form\AbstractVariantType;
+use Santeacademie\SuperUploaderBundle\Bridge\UploadablePersistentBridge;
 use Santeacademie\SuperUploaderBundle\Bridge\UploadableTemporaryBridge;
 use Santeacademie\SuperUploaderBundle\Asset\AbstractAsset;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
@@ -28,6 +29,7 @@ class AssetType extends AbstractAssetType
 
     public function __construct(
         private UploadableTemporaryBridge $uploadableTemporaryBridge,
+        private UploadablePersistentBridge $uploadablePersistentBridge,
         private UploadableEntityBridge $uploadableEntityBridge,
         private EventDispatcherInterface $eventDispatcher,
         private FilesystemOperator $filesystemOperator
@@ -68,16 +70,31 @@ class AssetType extends AbstractAssetType
             $builder->add($name, $variant->getVariantTypeClass(), $variantOptions);
 
             $variantFileOptions = [
-                'mapped' => false
+                'mapped' => false,
+                'attr' => [
+                    'class' => 'variant-file'
+                ]
             ];
 
             if (!is_null($options['label_variant_file'])) {
                 $variantFileOptions['label'] = $options['label_variant_file'];
             }
 
+            if ($options['allow_delete']) {
+                $builder->get($name)->add('delete', HiddenType::class, [
+                    'mapped' => false,
+                    'attr' => [
+                        'class' => 'variant-delete'
+                    ]
+                ]);
+            }
+
             $builder->get($name)
                 ->add('temporaryFile', HiddenType::class, [
-                    'mapped' => false
+                    'mapped' => false,
+                    'attr' => [
+                        'class' => 'variant-temporary'
+                    ]
                 ])
                 ->add('variantFile', FileType::class, $variantFileOptions);
 
@@ -121,6 +138,10 @@ class AssetType extends AbstractAssetType
                         // Simulate an uploaded File by taking the temporary one
                         $file = new TemporaryFile($variantTypeData['temporaryFile'], false, $this->filesystemOperator);
                     }
+                }
+
+                if ($data[$variantName]['delete'] === 'delete') {
+                    $this->uploadablePersistentBridge->forceRemoveEntityVariantFile($variant, $uploadableEntity);
                 }
 
                 if (is_null($file)) {
@@ -185,6 +206,7 @@ class AssetType extends AbstractAssetType
         $asset = $options['uploadable_entity']->getUploadableAssetByName($form->getName());
 
         $view->vars['asset'] = $asset;
+        $view->vars['allow_delete'] = $options['allow_delete'];
         $view->vars['variants'] = $asset->getVariants();
 
         $view->vars['genuine_upload_button'] = $options['genuine_upload_button'];
@@ -199,6 +221,7 @@ class AssetType extends AbstractAssetType
                 'uploadable_entity' => null,
                 'genuine_upload_button' => true,
                 'variant_upload_button' => true,
+                'allow_delete' => true,
                 'label_variant' => null,
                 'label_variant_file' => null,
                 'required' => false,

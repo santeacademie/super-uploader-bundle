@@ -162,6 +162,11 @@ class UploadablePersistentBridge extends AbstractUploadableBridge
             return false;
         }
 
+        return $this->forceRemoveEntityVariantFile($variant, $uploadableEntity);
+    }
+
+    public function forceRemoveEntityVariantFile(AbstractVariant $variant, UploadableInterface $uploadableEntity): bool
+    {
         $file = $variant->getVariantFile(false);
 
         if (is_null($file)) {
@@ -173,6 +178,7 @@ class UploadablePersistentBridge extends AbstractUploadableBridge
         }
 
         $this->filesystem->delete($file);
+
         $variant->setVariantFile(null);
 
         $this->eventDispatcher->dispatch(new PersistentVariantDeletedEvent($variant, $uploadableEntity));

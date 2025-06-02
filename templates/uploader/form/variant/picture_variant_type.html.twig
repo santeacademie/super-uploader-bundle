@@ -12,8 +12,11 @@
 
 		{% set filePath = isEditingFile ? (form.variantFile.vars.data.publicUrl) : form.vars.data|uploadable(asset.name, variant.name) %}
 
-		<div class="image-wrapper " style="margin-top:5px;background-image: url('{{ asset(filePath) }}?{{ 'now'|date('U') }}');">
-		</div>
+		{% if filePath %}
+			<div class="image-wrapper variant-preview" style="margin-top:5px;background-image: url('{{ asset(filePath) }}?{{ 'now'|date('U') }}');"></div>
+		{% else %}
+			<span class="variant-no-preview">Pas de fichier disponible</span>
+		{% endif %}	
 
 		{{ form_rest(form) }}
 	</fieldset>

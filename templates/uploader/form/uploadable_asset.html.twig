@@ -10,27 +10,46 @@
 
 {% block asset_widget %}
 
+
 	<div class="genuine-field {{ (not genuine_upload_button or variants|length == 1) ? 'hidden' }}">
 		{{ form_widget(form.genuineFile, {'attr': {'class': 'upload-asset-input', 'data-variants': variants|keys|json_encode }}) }}
 	</div>
 
-	<div class="row">
+	<div class="row asset-variants">
 		{% for variant in variants %}
-			{% set form_variant_type_name = form[variant.name].vars.cache_key|replace({(form[variant.name].vars.id) : ''})|trim('_') %}
+			{% set variant_file = variant.variantFile %}
+			{% set is_empty = variant_file is null %}
+			<div class="asset-variant {{ is_empty ? 'variant-empty' }}">
+				{% set form_variant_type_name = form[variant.name].vars.cache_key|replace({(form[variant.name].vars.id) : ''})|trim('_') %}
 
-			<div class="uploadable-asset-variant-static-injector"
-			 	{% if form[variant.name].vars.js %}
-			 		data-js="{{ asset('bundles/superuploader/js/uploader/form/variant/'~form_variant_type_name~'.js') }}"
-			 	{% endif %}
-				{% if form[variant.name].vars.css %}
-					data-css="{{  asset('bundles/superuploader/css/uploader/form/variant/'~form_variant_type_name~'.css') }}"
-			 	{% endif %}
-				data-asset="{{ asset.name }}"
-				data-variant="{{ variant.name }}"
-				data-variant-type="{{ form_variant_type_name }}">
+				<div class="uploadable-asset-variant-static-injector"
+					{% if form[variant.name].vars.js %}
+						data-js="{{ asset('bundles/superuploader/js/uploader/form/variant/'~form_variant_type_name~'.js') }}"
+					{% endif %}
+					{% if form[variant.name].vars.css %}
+						data-css="{{  asset('bundles/superuploader/css/uploader/form/variant/'~form_variant_type_name~'.css') }}"
+					{% endif %}
+					data-asset="{{ asset.name }}"
+					data-variant="{{ variant.name }}"
+					data-variant-type="{{ form_variant_type_name }}">
+				</div>
+
+				
+				{{ form_row(form[variant.name], {variant_type_name: form_variant_type_name})}}
+
+				{% if not is_empty %}
+					<div class="variant-button-actions">
+						<a href="{{ asset(variant_file) }}" target="_blank" class="btn btn-primary variant-read-button">
+							<i class="fas fa-external-link-alt"></i>
+						</a>
+						{% if form.vars.allow_delete %}
+							<button type="button" class="btn btn-danger variant-delete-button">
+								<i class="fas fa-trash"></i>
+							</button>
+						{% endif %}
+					</div>
+				{% endif %}
 			</div>
-
-			{{ form_row(form[variant.name], {variant_type_name: form_variant_type_name})}}
 		{% endfor %}
 	</div>
 

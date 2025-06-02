@@ -7,17 +7,16 @@
 		{% set uploadedVariant = form.vars.data|uploadable(variant.asset.name, variant.name, false) %}
 
 		{% if uploadedVariant %}
-			<a href="{{ asset(uploadedVariant) }}?{{ 'now'|date('U') }}" target="_blank">Télécharger le fichier disponible</a>
-			<video width="500px" controls src="{{ asset(uploadedVariant) }}?{{ 'now'|date('U') }}"></video>
+			<a href="{{ asset(uploadedVariant) }}?{{ 'now'|date('U') }}" target="_blank">Télécharger le fichier</a>
+			<video class="variant-preview" width="500px" controls src="{{ asset(uploadedVariant) }}?{{ 'now'|date('U') }}"></video>
 		{% else %}
-			<span>Pas de fichier disponible</span>
+			<span class="variant-no-preview">Pas de fichier disponible</span>
 		{% endif %}
 		<br>
 
 		{% if variant_upload_button %}
 			{{ form_widget(form.variantFile, {'attr': {'class': 'upload-variant-input ' ~ (not variant_upload_button ? 'hidden'), 'data-variants': [variant.name]|json_encode}}) }}
 		{% endif %}
-
 
 		{{ form_rest(form) }}
 	</fieldset>
