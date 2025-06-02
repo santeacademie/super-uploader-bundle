@@ -65,7 +65,7 @@ class UploadablePersistentBridge extends AbstractUploadableBridge
             ->toArray();
 
         foreach ($filesToDelete as $file) {
-            $this->filesystem->delete($file);
+            $this->filesystem->delete($file->getPathname());
         }
 
         try {
@@ -177,7 +177,7 @@ class UploadablePersistentBridge extends AbstractUploadableBridge
             $this->variantEntityMapRepository->deleteEntityMapByFile($file);
         }
 
-        $this->filesystem->delete($file);
+        $this->filesystem->delete($file->getPathname());
 
         $variant->setVariantFile(null);
 
