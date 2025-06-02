@@ -151,7 +151,7 @@ class UploadableTemporaryBridge extends AbstractUploadableBridge
         ->toArray();
 
         foreach ($expiredTemporaryFiles as $file) {
-            $this->filesystem->delete($file);
+            $this->filesystem->delete($file->getPathname());
         }
     }
 
