@@ -95,7 +95,8 @@ class UploadableTemporaryBridge extends AbstractUploadableBridge
             ];
         }
 
-        $this->temporaryEntityVariantsIndex[spl_object_hash($uploadableEntity)]['variants'][$variant->getName()] = $variant;
+        $assetVariantKey = sprintf('%s-%s', get_class($variant->getAsset()), $variant->getName());
+        $this->temporaryEntityVariantsIndex[spl_object_hash($uploadableEntity)]['variants'][$assetVariantKey] = $variant;
     }
 
     public function getIndexedEntitiesWithTemporaryVariants()
@@ -114,8 +115,9 @@ class UploadableTemporaryBridge extends AbstractUploadableBridge
     {
         $variants = $this->getIndexedEntitiesWithTemporaryVariants();
 
-        if (isset($variants[$variant->getName()])) {
-            unset($this->temporaryEntityVariantsIndex[spl_object_hash($uploadableEntity)]['variants'][$variant->getName()]);
+        $assetVariantKey = sprintf('%s-%s', get_class($variant->getAsset()), $variant->getName());
+        if (isset($variants[$assetVariantKey])) {
+            unset($this->temporaryEntityVariantsIndex[spl_object_hash($uploadableEntity)]['variants'][$assetVariantKey]);
             return true;
         }
 
