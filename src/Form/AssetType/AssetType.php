@@ -140,7 +140,7 @@ class AssetType extends AbstractAssetType
                     }
                 }
 
-                if ($data[$variantName]['delete'] === 'delete') {
+                if (isset($data[$variantName]['delete']) && $data[$variantName]['delete'] === 'delete') {
                     $this->uploadablePersistentBridge->forceRemoveEntityVariantFile($variant, $uploadableEntity);
                 }
 
