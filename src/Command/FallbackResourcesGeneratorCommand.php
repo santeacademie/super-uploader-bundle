@@ -22,7 +22,7 @@ class FallbackResourcesGeneratorCommand extends Command
         parent::__construct(self::$commandName);
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setDescription('Generate fallback resource asset files')

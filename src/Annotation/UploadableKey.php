@@ -2,7 +2,6 @@
 
 namespace Santeacademie\SuperUploaderBundle\Annotation;
 
-use Symfony\Component\Routing\Annotation;
 use Doctrine\Common\Annotations\Annotation\Target;
 
 /**

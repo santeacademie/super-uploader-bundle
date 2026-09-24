@@ -3,7 +3,6 @@
 namespace Santeacademie\SuperUploaderBundle\Annotation;
 
 use Santeacademie\SuperUploaderBundle\Asset\AbstractAsset;
-use Symfony\Component\Routing\Annotation;
 use Doctrine\Common\Annotations\Annotation\Target;
 
 /**

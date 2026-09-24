@@ -55,7 +55,7 @@ abstract class AbstractAsset
         return $this->propertyScope;
     }
 
-    public function setPropertyScope(string $propertyScope = null): self
+    public function setPropertyScope(?string $propertyScope = null): self
     {
         $this->propertyScope = $propertyScope;
 
